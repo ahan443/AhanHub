@@ -1,0 +1,5 @@
+{
+  "name": "AhanHub",
+  "description": "An all-in-one entertainment platform to listen to Quran recitations, watch anime, and tune into online FM radio. Includes a Gemini-powered admin panel to dynamically generate content descriptions.",
+  "requestFramePermissions": []
+}
