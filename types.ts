@@ -43,4 +43,5 @@ export interface LiveTvChannel {
   logoUrl: string;
   streamUrl: string;
   category: string;
+  type?: 'embed' | 'hls';
 }

@@ -1,10 +1,46 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { LiveTvChannel } from '../types';
+
+declare var Hls: any;
 
 interface LiveTvPageProps {
   channels: LiveTvChannel[];
 }
+
+const HlsPlayer: React.FC<{src: string}> = ({src}) => {
+    const videoRef = useRef<HTMLVideoElement>(null);
+
+    useEffect(() => {
+        let hls: any;
+        const videoElement = videoRef.current;
+        if (videoElement) {
+            if (Hls.isSupported()) {
+                hls = new Hls();
+                hls.loadSource(src);
+                hls.attachMedia(videoElement);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    videoElement.play().catch(e => console.error("Autoplay was prevented.", e));
+                });
+            } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                // Native HLS support (e.g., Safari)
+                videoElement.src = src;
+                videoElement.addEventListener('loadedmetadata', () => {
+                    videoElement.play().catch(e => console.error("Autoplay was prevented.", e));
+                });
+            }
+        }
+        
+        return () => {
+            if (hls) {
+                hls.destroy();
+            }
+        }
+    }, [src]);
+
+    return <video ref={videoRef} controls className="w-full h-full" autoPlay playsInline />;
+};
+
 
 const LiveTvPage: React.FC<LiveTvPageProps> = ({ channels }) => {
   const [selectedChannel, setSelectedChannel] = useState<LiveTvChannel | null>(null);
@@ -22,6 +58,8 @@ const LiveTvPage: React.FC<LiveTvPageProps> = ({ channels }) => {
   }, [channels, searchTerm, selectedCategory]);
 
   if (selectedChannel) {
+    const isHls = selectedChannel.type === 'hls' || selectedChannel.streamUrl.endsWith('.m3u8');
+
     return (
       <div className="animate-fade-in">
         <button
@@ -37,14 +75,18 @@ const LiveTvPage: React.FC<LiveTvPageProps> = ({ channels }) => {
         <h2 className="text-3xl font-bold text-cyan-400 mb-4">{selectedChannel.name}</h2>
         
         <div className="aspect-video bg-black rounded-lg shadow-2xl shadow-cyan-900/20 border border-slate-700/50 overflow-hidden">
-          <iframe
-            src={selectedChannel.streamUrl}
-            title={`${selectedChannel.name} Live Stream`}
-            className="w-full h-full"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          ></iframe>
+          {isHls ? (
+             <HlsPlayer src={selectedChannel.streamUrl} />
+          ) : (
+            <iframe
+              src={selectedChannel.streamUrl}
+              title={`${selectedChannel.name} Live Stream`}
+              className="w-full h-full"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          )}
         </div>
       </div>
     );

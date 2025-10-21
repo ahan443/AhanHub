@@ -286,46 +286,55 @@ export const RadioData: RadioStation[] = Object.entries(stationsByCountry).flatM
 );
 
 export const LiveTvData: LiveTvChannel[] = [
-    {
-        id: 1,
-        name: "Al Jazeera",
-        logoUrl: "https://i.ibb.co/0Vwqd9C/Al-Jazeera-logo.png",
-        streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCNye-wNBqNL5ZzHSJj3l8Bg&autoplay=1",
-        category: "News"
-    },
-    {
-        id: 2,
-        name: "Bloomberg",
-        logoUrl: "https://i.ibb.co/bzznK5V/Bloomberg-logo.png",
-        streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCIALsOLUH5AbLnkke8xAejA&autoplay=1",
-        category: "News"
-    },
-    {
-        id: 3,
-        name: "NASA TV",
-        logoUrl: "https://i.ibb.co/YTSL3V1/NASA-logo.png",
-        streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCLA_DiR1FfKNvjuUpBHmylQ&autoplay=1",
-        category: "Science"
-    },
-    {
-        id: 4,
-        name: "Somoy TV",
-        logoUrl: "https://i.ibb.co/N2fb7jL/Somoy-TV-logo.png",
-        streamUrl: "https://www.youtube.com/embed/live_stream?channel=UC2_g_2kOa7-55oK-hA6r4Sg&autoplay=1",
-        category: "News"
-    },
-    {
-        id: 5,
-        name: "LoFi Girl",
-        logoUrl: "https://i.ibb.co/pxtRzG3/lofigirl-logo.png",
-        streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCSJ4gkVC6NrvII8umztf0Ow&autoplay=1",
-        category: "Music"
-    },
-    {
-        id: 6,
-        name: "DW News",
-        logoUrl: "https://i.ibb.co/51c2SgT/DW-logo.png",
-        streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCknLrEdhRCp1aGoNsWuefGA&autoplay=1",
-        category: "News"
-    }
+    { id: 1, name: "Al Jazeera", logoUrl: "https://i.ibb.co/0Vwqd9C/Al-Jazeera-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCNye-wNBqNL5ZzHSJj3l8Bg&autoplay=1", category: "News", type: 'embed' },
+    { id: 2, name: "Bloomberg", logoUrl: "https://i.ibb.co/bzznK5V/Bloomberg-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCIALsOLUH5AbLnkke8xAejA&autoplay=1", category: "News", type: 'embed' },
+    { id: 3, name: "NASA TV", logoUrl: "https://i.ibb.co/YTSL3V1/NASA-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCLA_DiR1FfKNvjuUpBHmylQ&autoplay=1", category: "Science", type: 'embed' },
+    { id: 4, name: "Somoy TV", logoUrl: "https://i.ibb.co/N2fb7jL/Somoy-TV-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UC2_g_2kOa7-55oK-hA6r4Sg&autoplay=1", category: "News", type: 'embed' },
+    { id: 5, name: "LoFi Girl", logoUrl: "https://i.ibb.co/pxtRzG3/lofigirl-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCSJ4gkVC6NrvII8umztf0Ow&autoplay=1", category: "Music", type: 'embed' },
+    { id: 6, name: "DW News", logoUrl: "https://i.ibb.co/51c2SgT/DW-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCknLrEdhRCp1aGoNsWuefGA&autoplay=1", category: "News", type: 'embed' },
+    { id: 7, name: "ABC News", logoUrl: "https://i.ibb.co/GcJy9b1/abc-news-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCBi2mrWuNuyYy4gbM6fU18Q&autoplay=1", category: "News", type: 'embed' },
+    { id: 8, name: "NBC News", logoUrl: "https://i.ibb.co/mHRLx9R/nbc-news-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCeY0bbntWzzVIaj2z3QigXg&autoplay=1", category: "News", type: 'embed' },
+    { id: 9, name: "CBS News", logoUrl: "https://i.ibb.co/3kGzZfG/cbs-news-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UC8p1vwvWtl6T73jiV9_incA&autoplay=1", category: "News", type: 'embed' },
+    { id: 10, name: "Sky News", logoUrl: "https://i.ibb.co/hZ2vJgB/sky-news-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCoMdktPbSTixAyNGwb-UYkQ&autoplay=1", category: "News", type: 'embed' },
+    { id: 11, name: "India Today", logoUrl: "https://i.ibb.co/r3Yp7k0/india-today-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCYPvAwZP8pZhSMW8qs7cVCw&autoplay=1", category: "News", type: 'embed' },
+    { id: 12, name: "NDTV", logoUrl: "https://i.ibb.co/mG7gq4p/ndtv-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCZFMm1vH0dfYcGUbF-65hVA&autoplay=1", category: "News", type: 'embed' },
+    { id: 13, name: "Aaj Tak", logoUrl: "https://i.ibb.co/42W0W2t/aaj-tak-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCt4t-JeY85JeguInvsjMATQ&autoplay=1", category: "News", type: 'embed' },
+    { id: 14, name: "Tagesschau", logoUrl: "https://i.ibb.co/G9j5M8P/tagesschau-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UC5NOI1MYl-qY_1H_Uj2_o_w&autoplay=1", category: "News", type: 'embed' },
+    { id: 15, name: "France 24", logoUrl: "https://i.ibb.co/xJ5B6pM/france-24-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCC-T1NdnK-i2O_B1Z_23-yQ&autoplay=1", category: "News", type: 'embed' },
+    { id: 16, name: "NHK World-Japan", logoUrl: "https://i.ibb.co/k2x2B6G/nhk-world-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCB-cT2iV9yAD2i1sIF5s_3g&autoplay=1", category: "News", type: 'embed' },
+    { id: 17, name: "ANN News", logoUrl: "https://i.ibb.co/x2C4dK6/ann-news-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCGCZAYq5Xxojl_tDRusWJCA&autoplay=1", category: "News", type: 'embed' },
+    { id: 18, name: "Arirang News", logoUrl: "https://i.ibb.co/6y1p72P/arirang-tv-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCf2o_24i_82T_r2t33sV_1w&autoplay=1", category: "News", type: 'embed' },
+    { id: 19, name: "YTN", logoUrl: "https://i.ibb.co/3mNfS0b/ytn-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UChlgI3UHCOnwUGzW4g3Q-3g&autoplay=1", category: "News", type: 'embed' },
+    { id: 20, name: "TV Brasil", logoUrl: "https://i.ibb.co/hKsyVfR/tv-brasil-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UC_2l_zJc3A5aG3yS2N_Mh_Q&autoplay=1", category: "Public", type: 'embed' },
+    { id: 21, name: "AlQahera News", logoUrl: "https://i.ibb.co/jGG3d09/alqahera-news-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UC2p-rXF21cM8yZz7vP5wF5w&autoplay=1", category: "News", type: 'embed' },
+    { id: 22, name: "CBC News", logoUrl: "https://i.ibb.co/JqXbJ7f/cbc-news-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCuFFtHkBp-NBj_EL2T2gurg&autoplay=1", category: "News", type: 'embed' },
+    { id: 23, name: "ABC News Australia", logoUrl: "https://i.ibb.co/d0j8fX7/abc-australia-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCVgA32x2GA6h56iI4i3g2tQ&autoplay=1", category: "News", type: 'embed' },
+    { id: 24, name: "TRT World", logoUrl: "https://i.ibb.co/jM7jWwR/trt-world-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UC7fWeaHhqgM4Ry-RMpM27oA&autoplay=1", category: "News", type: 'embed' },
+    { id: 25, name: "RT News", logoUrl: "https://i.ibb.co/Jc2Xf7n/rt-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UClFjnr12I-y-u-22-b2g2qw&autoplay=1", category: "News", type: 'embed' },
+    { id: 26, name: "RTVE Noticias", logoUrl: "https://i.ibb.co/L5hS0Hh/rtve-noticias-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UC7QZ5D_wS4_o_jBw0-ASFNQ&autoplay=1", category: "News", type: 'embed' },
+    { id: 27, name: "Rai News 24", logoUrl: "https://i.ibb.co/zX8Z9y8/rai-news-24-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UC2APxVe6_70c3sJ-3N_IevQ&autoplay=1", category: "News", type: 'embed' },
+    { id: 28, name: "Milenio TV", logoUrl: "https://i.ibb.co/hH44Zp4/milenio-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCFxHplbcoJK9m70c40I-JMA&autoplay=1", category: "News", type: 'embed' },
+    { id: 29, name: "Todo Noticias", logoUrl: "https://i.ibb.co/N7Jc424/tn-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCj6PcyLvpnIRT_2W_mwa94A&autoplay=1", category: "News", type: 'embed' },
+    { id: 30, name: "Arise News", logoUrl: "https://i.ibb.co/GvxYk97/arise-news-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCna-M3S-04D_T-P0bT8iV4A&autoplay=1", category: "News", type: 'embed' },
+    { id: 31, name: "SABC News", logoUrl: "https://i.ibb.co/wJ2mDq1/sabc-news-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UC8yH-uI81UUtEMDsowQyx1g&autoplay=1", category: "News", type: 'embed' },
+    { id: 32, name: "CGTN", logoUrl: "https://i.ibb.co/4pL5JpG/cgtn-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UC-lprqFuyjc3-wI3s4i-fLw&autoplay=1", category: "News", type: 'embed' },
+    { id: 33, name: "Kompas TV", logoUrl: "https://i.ibb.co/YyYf4hV/kompas-tv-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCUo9aJ9c0dMh_I39B6pnt_A&autoplay=1", category: "News", type: 'embed' },
+    { id: 34, name: "ABS-CBN News", logoUrl: "https://i.ibb.co/4dC9fS4/abs-cbn-news-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UC_y5C-i0u3bae4-N3o2po-A&autoplay=1", category: "News", type: 'embed' },
+    { id: 35, name: "THE STANDARD", logoUrl: "https://i.ibb.co/y4Fm7X2/the-standard-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCmIuFUP_K5E8gG7Q41I3mFA&autoplay=1", category: "News", type: 'embed' },
+    { id: 36, name: "VTC NOW", logoUrl: "https://i.ibb.co/D9M33xH/vtc-now-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCP_VfT1s22g_I3_6-w6yTqA&autoplay=1", category: "News", type: 'embed' },
+    { id: 37, name: "Geo News", logoUrl: "https://i.ibb.co/k2x28x7/geo-news-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCbX--P3Y2grw-p50t4Jk_1A&autoplay=1", category: "News", type: 'embed' },
+    { id: 38, name: "Al Ekhbariya", logoUrl: "https://i.ibb.co/P9tN4t1/al-ekhbariya-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCnuQ_n12iA_8e_69Ytx9OqQ&autoplay=1", category: "News", type: 'embed' },
+    { id: 39, name: "TVP World", logoUrl: "https://i.ibb.co/k6Yj6Wv/tvp-world-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCBvVkl1-hH08T7n-T64a2DA&autoplay=1", category: "News", type: 'embed' },
+    { id: 40, name: "NOS", logoUrl: "https://i.ibb.co/C074C6H/nos-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCv-y2vgQp901p1Y2-tDsT-Q&autoplay=1", category: "News", type: 'embed' },
+    { id: 41, name: "WION", logoUrl: "https://i.ibb.co/k5z0z1s/wion-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UC_gUM8rL-Lrg6O3adPW9K1g&autoplay=1", category: "News", type: 'embed' },
+    { id: 42, name: "The Jazz Hop Cafe", logoUrl: "https://i.ibb.co/zHChYc3/jazz-hop-cafe-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCi8wq35_93y32w7_2dCSr-Q&autoplay=1", category: "Music", type: 'embed' },
+    { id: 43, name: "Spinnin' Records", logoUrl: "https://i.ibb.co/GvxY239/spinnin-records-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCp-S1m0oQd_sI4hZ4pI_T_A&autoplay=1", category: "Music", type: 'embed' },
+    { id: 44, name: "NoCopyrightSounds", logoUrl: "https://i.ibb.co/5cQ3F00/ncs-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UC_aEa8K-EOJ3D6gOs7HcyNg&autoplay=1", category: "Music", type: 'embed' },
+    { id: 45, name: "Red Bull TV", logoUrl: "https://i.ibb.co/K2v9X8r/red-bull-tv-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCblfuW_4rakIf2h6aqANefA&autoplay=1", category: "Sports", type: 'embed' },
+    { id: 46, name: "GoPro", logoUrl: "https://i.ibb.co/7jXkYk4/gopro-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCqhnX4jA0A5paNd1v-zEysw&autoplay=1", category: "Lifestyle", type: 'embed' },
+    { id: 47, name: "Explore Live Cams", logoUrl: "https://i.ibb.co/tLWgW9j/explore-org-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UC-2KSeUU5SMCX6XLRD-AEvw&autoplay=1", category: "Nature", type: 'embed' },
+    { id: 48, name: "Monterey Bay Aquarium", logoUrl: "https://i.ibb.co/9hF3Q8s/monterey-bay-aquarium-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCb-t_tN2sgoQd7AbA_KQRmw&autoplay=1", category: "Nature", type: 'embed' },
+    { id: 49, name: "IGN", logoUrl: "https://i.ibb.co/f46fJv6/ign-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCKy1dAqELo0zrOtPkf0eTMw&autoplay=1", category: "Gaming", type: 'embed' },
+    { id: 50, name: "Gamespot", logoUrl: "https://i.ibb.co/0yL2z4q/gamespot-logo.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCbu2SsF-cDB4CkURpvBYkKw&autoplay=1", category: "Gaming", type: 'embed' },
+    { id: 51, name: "Duronto TV", logoUrl: "https://i.ibb.co/6rZ4Y0f/duronto-tv-logo.png", streamUrl: "https://tvsen4.aynaott.com/durontotv/tracks-v1a1/mono.ts.m3u8", category: "Kids", type: "hls" }
 ];
