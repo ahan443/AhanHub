@@ -5,19 +5,11 @@ import Sidebar from './components/Sidebar';
 import QuranPage from './pages/QuranPage';
 import AnimePage from './pages/AnimePage';
 import FmRadioPage from './pages/FmRadioPage';
-import AdminPage from './pages/AdminPage';
-import { QuranData, AnimeData, RadioData } from './constants';
-import type { Surah, Anime, RadioStation } from './types';
+import LiveTvPage from './pages/LiveTvPage';
+import AboutPage from './pages/AboutPage';
+import { QuranData, AnimeData, RadioData, LiveTvData } from './constants';
 
 const App: React.FC = () => {
-  const [surahs, setSurahs] = useState<Surah[]>(QuranData);
-  const [animes, setAnimes] = useState<Anime[]>(AnimeData);
-  const [stations, setStations] = useState<RadioStation[]>(RadioData);
-
-  const handleAddAnime = (newAnime: Anime) => {
-    setAnimes(prev => [newAnime, ...prev]);
-  };
-
   const MainContent: React.FC = () => {
     const location = useLocation();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -27,7 +19,8 @@ const App: React.FC = () => {
         case '/': return "Quran Recitations";
         case '/anime': return "Anime Streaming";
         case '/fm-radio': return "FM Radio";
-        case '/admin': return "Admin Panel";
+        case '/live-tv': return "Live TV";
+        case '/about': return "About Us";
         default: return "AhanHub";
       }
     };
@@ -55,10 +48,11 @@ const App: React.FC = () => {
             <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
               <h1 className="hidden lg:block text-3xl font-bold mb-8 tracking-tight text-cyan-400">{getTitle()}</h1>
               <Routes>
-                <Route path="/" element={<QuranPage surahs={surahs} />} />
-                <Route path="/anime" element={<AnimePage animes={animes} setAnimes={setAnimes} />} />
-                <Route path="/fm-radio" element={<FmRadioPage stations={stations} />} />
-                <Route path="/admin" element={<AdminPage onAddAnime={handleAddAnime} />} />
+                <Route path="/" element={<QuranPage surahs={QuranData} />} />
+                <Route path="/anime" element={<AnimePage animes={AnimeData} />} />
+                <Route path="/fm-radio" element={<FmRadioPage stations={RadioData} />} />
+                <Route path="/live-tv" element={<LiveTvPage channels={LiveTvData} />} />
+                <Route path="/about" element={<AboutPage />} />
               </Routes>
             </main>
         </div>

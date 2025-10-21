@@ -36,3 +36,11 @@ export interface RadioStation {
   genre: string;
   tracks: RadioTrack[];
 }
+
+export interface LiveTvChannel {
+  id: number;
+  name: string;
+  logoUrl: string;
+  streamUrl: string;
+  category: string;
+}

@@ -1,4 +1,5 @@
-import type { Surah, Anime, RadioStation } from './types';
+
+import type { Surah, Anime, RadioStation, LiveTvChannel } from './types';
 
 export const QuranData: Surah[] = [
     { number: 1, name: "الفاتحة", englishName: "Al-Fatiha", englishNameTranslation: "The Opening", numberOfAyahs: 7, revelationType: "Meccan", audioUrl: "https://server6.mp3quran.net/qtm/001.mp3" },
@@ -202,8 +203,8 @@ const rawAnimeData = {
 
 const animeImageMap: { [key: string]: string } = {
     'Food Wars! Shokugeki no Soma': 'https://i.ibb.co.com/X9zsLxH/unnamed.jpg',
-    'My Dress-Up Darling Season 1': 'https://i.ibb.co.com/RG2xhHJX/unnamed-1.jpg',
-    'My Dress-Up Darling Season 2': 'https://i.ibb.co.com/RG2xhHJX/unnamed-1.jpg',
+    'My Dress-Up Darling Season 1': 'https://i.ibb.co/RG2xhHJX/unnamed-1.jpg',
+    'My Dress-Up Darling Season 2': 'https://i.ibb.co/RG2xhHJX/unnamed-1.jpg',
     'Solo Leveling Season 1': 'https://i.ibb.co/nqty9RSq/unnamed-3.jpg',
     'Solo Leveling Season 2': 'https://i.ibb.co/nqty9RSq/unnamed-3.jpg',
 };
@@ -283,3 +284,48 @@ export const RadioData: RadioStation[] = Object.entries(stationsByCountry).flatM
         }],
     }))
 );
+
+export const LiveTvData: LiveTvChannel[] = [
+    {
+        id: 1,
+        name: "Al Jazeera",
+        logoUrl: "https://i.ibb.co/0Vwqd9C/Al-Jazeera-logo.png",
+        streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCNye-wNBqNL5ZzHSJj3l8Bg&autoplay=1",
+        category: "News"
+    },
+    {
+        id: 2,
+        name: "Bloomberg",
+        logoUrl: "https://i.ibb.co/bzznK5V/Bloomberg-logo.png",
+        streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCIALsOLUH5AbLnkke8xAejA&autoplay=1",
+        category: "News"
+    },
+    {
+        id: 3,
+        name: "NASA TV",
+        logoUrl: "https://i.ibb.co/YTSL3V1/NASA-logo.png",
+        streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCLA_DiR1FfKNvjuUpBHmylQ&autoplay=1",
+        category: "Science"
+    },
+    {
+        id: 4,
+        name: "Somoy TV",
+        logoUrl: "https://i.ibb.co/N2fb7jL/Somoy-TV-logo.png",
+        streamUrl: "https://www.youtube.com/embed/live_stream?channel=UC2_g_2kOa7-55oK-hA6r4Sg&autoplay=1",
+        category: "News"
+    },
+    {
+        id: 5,
+        name: "LoFi Girl",
+        logoUrl: "https://i.ibb.co/pxtRzG3/lofigirl-logo.png",
+        streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCSJ4gkVC6NrvII8umztf0Ow&autoplay=1",
+        category: "Music"
+    },
+    {
+        id: 6,
+        name: "DW News",
+        logoUrl: "https://i.ibb.co/51c2SgT/DW-logo.png",
+        streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCknLrEdhRCp1aGoNsWuefGA&autoplay=1",
+        category: "News"
+    }
+];

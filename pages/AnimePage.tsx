@@ -1,9 +1,9 @@
+
 import React, { useState } from 'react';
 import type { Anime } from '../types';
 
 interface AnimePageProps {
   animes: Anime[];
-  setAnimes: React.Dispatch<React.SetStateAction<Anime[]>>;
 }
 
 const AnimePage: React.FC<AnimePageProps> = ({ animes }) => {
