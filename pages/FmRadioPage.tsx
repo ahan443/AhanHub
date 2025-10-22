@@ -24,13 +24,44 @@ const StarIcon: React.FC<{ isFavorite: boolean }> = ({ isFavorite }) => (
     </svg>
 );
 
+const FmRadioPageLoader = () => (
+    <div className="animate-fade-in flex flex-col h-full">
+        {/* Search and Filters */}
+        <div className="shrink-0 mb-6 space-y-4">
+             <div className="w-full max-w-lg h-11 bg-slate-800/50 rounded-lg animate-pulse"></div>
+            <div className="flex items-center space-x-2 overflow-x-auto pb-2 -mx-1 px-1">
+                {Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className="shrink-0 h-9 w-20 bg-slate-700/50 rounded-full animate-pulse"></div>
+                ))}
+            </div>
+        </div>
+      
+        <div className="flex-grow overflow-y-auto -mr-4 pr-4">
+            <div className="mb-8">
+                <div className="h-6 w-32 bg-slate-700/50 rounded animate-pulse mb-4 px-1"></div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    {Array.from({ length: 10 }).map((_, i) => (
+                        <div key={i} className="bg-slate-800/50 p-4 rounded-lg animate-pulse text-center">
+                            <div className="flex items-center justify-center h-20 mb-3">
+                                <div className="h-12 w-12 bg-slate-700/50 rounded-full"></div>
+                            </div>
+                            <div className="h-4 w-24 bg-slate-700/50 rounded mx-auto"></div>
+                            <div className="h-3 w-16 bg-slate-700/50 rounded mx-auto mt-2"></div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
 
 const FmRadioPage: React.FC<FmRadioPageProps> = ({ stations }) => {
   const [selectedStation, setSelectedStation] = useState<RadioStation | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
-
+  const [loading, setLoading] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const [favorites, setFavorites] = useState<number[]>(() => {
@@ -44,6 +75,11 @@ const FmRadioPage: React.FC<FmRadioPageProps> = ({ stations }) => {
   });
   
   const genres = useMemo(() => ['All', ...Array.from(new Set(stations.map(s => s.genre)))], [stations]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     try {
@@ -120,6 +156,10 @@ const FmRadioPage: React.FC<FmRadioPageProps> = ({ stations }) => {
         }
     });
   };
+
+  if (loading) {
+    return <FmRadioPageLoader />;
+  }
 
   if (selectedStation && currentTrack) {
     return (

@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { LiveTvChannel } from '../types';
 
@@ -7,6 +6,31 @@ declare var Hls: any;
 interface LiveTvPageProps {
   channels: LiveTvChannel[];
 }
+
+const LiveTvPageLoader = () => (
+    <div className="animate-fade-in flex flex-col h-full">
+        {/* Search and Filters */}
+        <div className="shrink-0 mb-6 space-y-4">
+            <div className="w-full max-w-lg h-11 bg-slate-800/50 rounded-lg animate-pulse"></div>
+            <div className="flex items-center space-x-2 overflow-x-auto pb-2 -mx-1 px-1">
+                {Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className="shrink-0 h-9 w-20 bg-slate-700/50 rounded-full animate-pulse"></div>
+                ))}
+            </div>
+        </div>
+        <div className="flex-grow overflow-y-auto -mr-4 pr-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                {Array.from({ length: 10 }).map((_, i) => (
+                    <div key={i} className="animate-pulse">
+                        <div className="aspect-video bg-slate-800/50 rounded-lg"></div>
+                        <div className="h-4 w-3/4 bg-slate-800/50 rounded mt-3 mx-auto"></div>
+                        <div className="h-3 w-1/2 bg-slate-800/50 rounded mt-2 mx-auto"></div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
+);
 
 const HlsPlayer: React.FC<{src: string}> = ({src}) => {
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -46,6 +70,20 @@ const LiveTvPage: React.FC<LiveTvPageProps> = ({ channels }) => {
   const [selectedChannel, setSelectedChannel] = useState<LiveTvChannel | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const backButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (selectedChannel && backButtonRef.current) {
+      backButtonRef.current.focus();
+    }
+  }, [selectedChannel]);
+
 
   const categories = useMemo(() => ['All', ...Array.from(new Set(channels.map(c => c.category)))], [channels]);
 
@@ -57,14 +95,19 @@ const LiveTvPage: React.FC<LiveTvPageProps> = ({ channels }) => {
     });
   }, [channels, searchTerm, selectedCategory]);
 
+  if (loading) {
+    return <LiveTvPageLoader />;
+  }
+
   if (selectedChannel) {
     const isHls = selectedChannel.type === 'hls' || selectedChannel.streamUrl.endsWith('.m3u8');
 
     return (
       <div className="animate-fade-in">
         <button
+          ref={backButtonRef}
           onClick={() => setSelectedChannel(null)}
-          className="mb-6 bg-slate-700/50 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center transition-colors"
+          className="mb-6 bg-slate-700/50 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-cyan-500"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -98,7 +141,7 @@ const LiveTvPage: React.FC<LiveTvPageProps> = ({ channels }) => {
       <div className="shrink-0 mb-6 space-y-4">
         <div className="relative">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </span>
@@ -107,7 +150,7 @@ const LiveTvPage: React.FC<LiveTvPageProps> = ({ channels }) => {
             placeholder="Search channels..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full max-w-lg pl-10 pr-4 py-2.5 text-white bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:border-cyan-500 transition-colors"
+            className="w-full max-w-lg pl-10 pr-4 py-2.5 text-white bg-slate-800/50 border border-slate-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-cyan-500 focus:border-transparent"
             aria-label="Search TV Channels"
           />
         </div>
@@ -116,7 +159,7 @@ const LiveTvPage: React.FC<LiveTvPageProps> = ({ channels }) => {
             <button
               key={category}
               onClick={() => setSelectedCategory(category === 'All' ? null : category)}
-              className={`shrink-0 px-4 py-2 text-sm font-semibold rounded-full transition-colors ${selectedCategory === category || (category === 'All' && !selectedCategory) ? 'bg-cyan-500 text-white' : 'bg-slate-700/50 text-gray-300 hover:bg-slate-700'}`}
+              className={`shrink-0 px-4 py-2 text-sm font-semibold rounded-full transition-colors ${selectedCategory === category || (category === 'All' && !selectedCategory) ? 'bg-cyan-500 text-white' : 'bg-slate-700/50 text-gray-300 hover:bg-slate-700'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-cyan-500`}
             >
               {category}
             </button>
@@ -130,14 +173,18 @@ const LiveTvPage: React.FC<LiveTvPageProps> = ({ channels }) => {
             {filteredChannels.map(channel => (
               <div
                 key={channel.id}
+                role="button"
+                tabIndex={0}
+                aria-label={`Play ${channel.name}`}
                 onClick={() => setSelectedChannel(channel)}
-                className="group cursor-pointer transform hover:-translate-y-2 transition-transform duration-300"
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setSelectedChannel(channel); }}
+                className="group cursor-pointer focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-lg transition-all duration-300 transform hover:-translate-y-1 focus:-translate-y-1 hover:scale-105 focus:scale-105"
               >
-                <div className="aspect-video bg-slate-800/50 rounded-lg shadow-lg flex items-center justify-center p-4 border border-slate-700/50 transition-colors group-hover:border-cyan-500/50 group-hover:bg-slate-700/80">
+                <div className="aspect-video bg-slate-800/50 rounded-lg shadow-lg flex items-center justify-center p-3 border border-slate-700/50 transition-all duration-300 group-hover:border-cyan-500/50 group-hover:bg-slate-700/80 group-focus:border-cyan-500/50 group-focus:bg-slate-700/80">
                   <img src={channel.logoUrl} alt={`${channel.name} logo`} className="max-h-full max-w-full object-contain" />
                 </div>
-                <p className="text-center text-white font-semibold mt-3 truncate">{channel.name}</p>
-                <p className="text-center text-gray-400 text-sm">{channel.category}</p>
+                <p className="text-center text-white font-semibold mt-2 px-1 truncate">{channel.name}</p>
+                <p className="text-center text-gray-400 text-xs px-1">{channel.category}</p>
               </div>
             ))}
           </div>

@@ -1,14 +1,50 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import type { Surah } from '../types';
 
 interface QuranPageProps {
   surahs: Surah[];
 }
 
+const QuranPageLoader = () => (
+    <div className="animate-fade-in flex flex-col h-full">
+        <div className="shrink-0 mb-6">
+            <div className="w-full max-w-lg h-11 bg-slate-800/50 rounded-lg animate-pulse"></div>
+        </div>
+        <div className="flex-grow overflow-y-auto -mr-4 pr-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {Array.from({ length: 12 }).map((_, i) => (
+                    <div key={i} className="bg-slate-800/50 p-4 rounded-lg animate-pulse">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-4">
+                                <div className="w-12 h-12 rounded-full bg-slate-700/50"></div>
+                                <div>
+                                    <div className="h-4 w-24 bg-slate-700/50 rounded"></div>
+                                    <div className="h-3 w-32 bg-slate-700/50 rounded mt-2"></div>
+                                </div>
+                            </div>
+                            <div className="text-right flex-shrink-0 pl-2">
+                                <div className="h-5 w-16 bg-slate-700/50 rounded"></div>
+                                <div className="h-2 w-20 bg-slate-700/50 rounded mt-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
+);
+
+
 const QuranPage: React.FC<QuranPageProps> = ({ surahs }) => {
   const [selectedSurah, setSelectedSurah] = useState<Surah | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleSelectSurah = useCallback((surah: Surah) => {
     setSelectedSurah(surah);
@@ -30,6 +66,10 @@ const QuranPage: React.FC<QuranPageProps> = ({ surahs }) => {
       surah.number.toString().includes(term)
     );
   });
+
+  if (loading) {
+    return <QuranPageLoader />;
+  }
 
   if (selectedSurah) {
     return (

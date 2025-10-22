@@ -1,19 +1,43 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Anime } from '../types';
 
 interface AnimePageProps {
   animes: Anime[];
 }
 
+const AnimePageLoader = () => (
+    <div className="animate-fade-in">
+        <div className="mb-8">
+            <div className="w-full max-w-lg h-10 bg-slate-800/50 rounded-lg animate-pulse"></div>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            {Array.from({ length: 10 }).map((_, i) => (
+                <div key={i} className="animate-pulse">
+                    <div className="aspect-[2/3] bg-slate-800/50 rounded-lg"></div>
+                </div>
+            ))}
+        </div>
+    </div>
+);
+
 const AnimePage: React.FC<AnimePageProps> = ({ animes }) => {
   const [selectedAnime, setSelectedAnime] = useState<Anime | null>(null);
   const [selectedVideoUrl, setSelectedVideoUrl] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const filteredAnimes = animes.filter(anime =>
     anime.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (loading) {
+    return <AnimePageLoader />;
+  }
 
   if (selectedAnime) {
     return (
