@@ -40,6 +40,8 @@ const AnimePage: React.FC<AnimePageProps> = ({ animes }) => {
   }
 
   if (selectedAnime) {
+    const currentEpisode = selectedAnime.episodes.find(ep => ep.videoUrl === selectedVideoUrl);
+    
     return (
       <div className="animate-fade-in">
         <button
@@ -65,11 +67,12 @@ const AnimePage: React.FC<AnimePageProps> = ({ animes }) => {
             {/* Player and Episode List */}
             <div>
                 {selectedVideoUrl ? (
-                    <div className="aspect-video bg-black rounded-lg mb-4">
-                         <iframe
+                    <div className="aspect-video bg-black rounded-lg mb-4 overflow-hidden">
+                        <iframe
+                            key={selectedVideoUrl}
                             src={selectedVideoUrl}
-                            title="Anime Episode Player"
-                            className="w-full h-full rounded-lg"
+                            title={currentEpisode ? `${selectedAnime.title} - ${currentEpisode.title}` : selectedAnime.title}
+                            className="w-full h-full"
                             frameBorder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowFullScreen

@@ -290,5 +290,5 @@ export const LiveTvData: LiveTvChannel[] = [
     { id: 5, name: "Madani Channel Bangla", logoUrl: "https://i.ibb.co/CBr2Yv7/madani-channel-bangla.png", streamUrl: "https://streaming.madanichannel.tv/static/streaming-playlists/hls/d3e49b76-ac06-4689-a641-9200445b647f/0.m3u8", category: "Spiritual", type: "hls" },
     { id: 6, name: "Boishakhi TV", logoUrl: "https://i.ibb.co/zZ9y7hG/Boishakhi-TV-Logo-wine.png", streamUrl: "https://boishakhi.sonarbanglatv.com/boishakhi/boishakhitv/index.m3u8", category: "Entertainment", type: "hls" },
     { id: 7, name: "Channel 24", logoUrl: "https://i.ibb.co/DRVsm5s/yathe-yathe.jpg", streamUrl: "https://www.youtube.com/embed/MDSG8XlGtRM?autoplay=1", category: "News", type: 'embed' },
-    { id: 6, name: "Rajdhani TV", logoUrl: "https://i.ibb.co/zZ9y7hG/Boishakhi-TV-Logo-wine.png", streamUrl: "https://stream.shariarsuvo.com/hls5/rajdhanicable.m3u8", category: "Entertainment", type: "hls" }
+    { id: 8, name: "Rajdhani TV", logoUrl: "https://i.ibb.co/zZ9y7hG/Boishakhi-TV-Logo-wine.png", streamUrl: "https://stream.shariarsuvo.com/hls5/rajdhanicable.m3u8", category: "Entertainment", type: "hls" }
 ];
