@@ -11,7 +11,7 @@ import AdminLoginPage from './pages/AdminLoginPage';
 import { initialQuranData, initialAnimeData, initialRadioData, initialLiveTvData } from './constants';
 import type { Surah, Anime, RadioStation, LiveTvChannel } from './types';
 import { db } from './services/firebase';
-import { collection, getDocs, addDoc, writeBatch, doc, orderBy, query } from 'firebase/firestore';
+import { collection, getDocs, doc, writeBatch, setDoc, getDoc, updateDoc, deleteDoc, orderBy, query } from 'firebase/firestore';
 
 const App: React.FC = () => {
   const [quranData, setQuranData] = useState<Surah[]>([]);
@@ -107,58 +107,141 @@ const App: React.FC = () => {
     sessionStorage.setItem('isAdmin', String(isAdmin));
   }, [isAdmin]);
 
-  const handleAddSurah = async (surah: Omit<Surah, 'number'>) => {
-    const newSurahNumber = quranData.length > 0 ? Math.max(...quranData.map(s => s.number)) + 1 : 1;
-    const newSurah: Surah = {
-      ...surah,
-      number: newSurahNumber,
-    };
+  // --- CRUD Handlers ---
+
+  // Quran
+  const handleAddSurah = async (surah: Surah) => {
      try {
-        await addDoc(collection(db, 'quran'), newSurah);
-        setQuranData(prev => [newSurah, ...prev].sort((a,b) => a.number - b.number));
+        const docId = String(surah.number).padStart(3, '0');
+        const docRef = doc(db, 'quran', docId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            throw new Error(`Surah with number ${surah.number} already exists.`);
+        }
+        await setDoc(docRef, surah);
+        setQuranData(prev => [...prev, surah].sort((a,b) => a.number - b.number));
     } catch (e) {
         console.error("Error adding Surah: ", e);
+        throw e;
+    }
+  };
+  const handleUpdateSurah = async (number: number, data: Omit<Surah, 'number'>) => {
+    try {
+        const docId = String(number).padStart(3, '0');
+        const docRef = doc(db, 'quran', docId);
+        await updateDoc(docRef, data);
+        setQuranData(prev => prev.map(s => s.number === number ? { number, ...data } : s));
+    } catch (e) {
+        console.error("Error updating Surah: ", e);
+        throw e;
+    }
+  };
+  const handleDeleteSurah = async (number: number) => {
+    try {
+        const docId = String(number).padStart(3, '0');
+        await deleteDoc(doc(db, 'quran', docId));
+        setQuranData(prev => prev.filter(s => s.number !== number));
+    } catch (e) {
+        console.error("Error deleting Surah: ", e);
+        throw e;
     }
   };
 
+  // Anime
   const handleAddAnime = async (anime: Omit<Anime, 'id'>) => {
     try {
-        const docRef = await addDoc(collection(db, 'anime'), anime);
-        const newAnime: Anime = {
-            ...anime,
-            id: docRef.id,
-        };
-        setAnimeData(prev => [newAnime, ...prev]);
+        const docRef = await setDoc(doc(collection(db, 'anime')), anime);
+        // Note: setDoc doesn't return a ref like addDoc, so we refetch to get the ID. A bit inefficient but simple.
+        // A better approach might be to generate an ID client-side.
+        const animeList = (await getDocs(collection(db, 'anime'))).docs.map(doc => ({ ...doc.data(), id: doc.id } as Anime));
+        setAnimeData(animeList.reverse());
     } catch (e) {
         console.error("Error adding Anime: ", e);
+        throw e;
+    }
+  };
+   const handleUpdateAnime = async (id: string, data: Omit<Anime, 'id'>) => {
+    try {
+        const docRef = doc(db, 'anime', id);
+        await updateDoc(docRef, data);
+        setAnimeData(prev => prev.map(a => a.id === id ? { id, ...data } : a));
+    } catch (e) {
+        console.error("Error updating Anime: ", e);
+        throw e;
+    }
+  };
+  const handleDeleteAnime = async (id: string) => {
+    try {
+        await deleteDoc(doc(db, 'anime', id));
+        setAnimeData(prev => prev.filter(a => a.id !== id));
+    } catch (e) {
+        console.error("Error deleting Anime: ", e);
+        throw e;
     }
   };
   
+  // Radio
   const handleAddRadioStation = async (station: Omit<RadioStation, 'id'>) => {
      try {
-        const docRef = await addDoc(collection(db, 'radio'), station);
-        const newStation: RadioStation = {
-            ...station,
-            id: docRef.id,
-        };
-        setRadioData(prev => [newStation, ...prev]);
+        const docRef = await setDoc(doc(collection(db, 'radio')), station);
+        const radioList = (await getDocs(collection(db, 'radio'))).docs.map(doc => ({ ...doc.data(), id: doc.id } as RadioStation));
+        setRadioData(radioList);
     } catch (e) {
         console.error("Error adding Radio Station: ", e);
+        throw e;
+    }
+  };
+  const handleUpdateRadioStation = async (id: string, data: Omit<RadioStation, 'id'>) => {
+    try {
+        const docRef = doc(db, 'radio', id);
+        await updateDoc(docRef, data);
+        setRadioData(prev => prev.map(s => s.id === id ? { id, ...data } : s));
+    } catch (e) {
+        console.error("Error updating Radio Station: ", e);
+        throw e;
+    }
+  };
+  const handleDeleteRadioStation = async (id: string) => {
+    try {
+        await deleteDoc(doc(db, 'radio', id));
+        setRadioData(prev => prev.filter(s => s.id !== id));
+    } catch (e) {
+        console.error("Error deleting Radio Station: ", e);
+        throw e;
     }
   };
 
+  // Live TV
   const handleAddLiveTvChannel = async (channel: Omit<LiveTvChannel, 'id'>) => {
     try {
-        const docRef = await addDoc(collection(db, 'tv'), channel);
-        const newChannel: LiveTvChannel = {
-            ...channel,
-            id: docRef.id,
-        };
-        setLiveTvData(prev => [newChannel, ...prev]);
+        const docRef = await setDoc(doc(collection(db, 'tv')), channel);
+        const tvList = (await getDocs(collection(db, 'tv'))).docs.map(doc => ({ ...doc.data(), id: doc.id } as LiveTvChannel));
+        setLiveTvData(tvList);
     } catch (e) {
         console.error("Error adding Live TV Channel: ", e);
+        throw e;
     }
   };
+   const handleUpdateLiveTvChannel = async (id: string, data: Omit<LiveTvChannel, 'id'>) => {
+    try {
+        const docRef = doc(db, 'tv', id);
+        await updateDoc(docRef, data);
+        setLiveTvData(prev => prev.map(c => c.id === id ? { id, ...data } : c));
+    } catch (e) {
+        console.error("Error updating Live TV Channel: ", e);
+        throw e;
+    }
+  };
+  const handleDeleteLiveTvChannel = async (id: string) => {
+    try {
+        await deleteDoc(doc(db, 'tv', id));
+        setLiveTvData(prev => prev.filter(c => c.id !== id));
+    } catch (e) {
+        console.error("Error deleting Live TV Channel: ", e);
+        throw e;
+    }
+  };
+
 
   const MainContent: React.FC = () => {
     const location = useLocation();
@@ -226,10 +309,22 @@ const App: React.FC = () => {
                 <Route path="/admin" element={
                   isAdmin ? (
                     <AdminPage 
+                      quran={quranData}
+                      animes={animeData}
+                      radioStations={radioData}
+                      tvChannels={liveTvData}
                       onAddSurah={handleAddSurah}
+                      onUpdateSurah={handleUpdateSurah}
+                      onDeleteSurah={handleDeleteSurah}
                       onAddAnime={handleAddAnime}
+                      onUpdateAnime={handleUpdateAnime}
+                      onDeleteAnime={handleDeleteAnime}
                       onAddRadioStation={handleAddRadioStation}
+                      onUpdateRadioStation={handleUpdateRadioStation}
+                      onDeleteRadioStation={handleDeleteRadioStation}
                       onAddLiveTvChannel={handleAddLiveTvChannel}
+                      onUpdateLiveTvChannel={handleUpdateLiveTvChannel}
+                      onDeleteLiveTvChannel={handleDeleteLiveTvChannel}
                       onLogout={() => setIsAdmin(false)}
                     />
                   ) : (
