@@ -1,6 +1,6 @@
 import type { Surah, Anime, RadioStation, LiveTvChannel } from './types';
 
-export const QuranData: Surah[] = [
+export const initialQuranData: Surah[] = [
     { number: 1, name: "الفاتحة", englishName: "Al-Fatiha", englishNameTranslation: "The Opening", numberOfAyahs: 7, revelationType: "Meccan", audioUrl: "https://server6.mp3quran.net/qtm/001.mp3" },
     { number: 2, name: "البقرة", englishName: "Al-Baqarah", englishNameTranslation: "The Cow", numberOfAyahs: 286, revelationType: "Medinan", audioUrl: "https://server6.mp3quran.net/qtm/002.mp3" },
     { number: 3, name: "آل عمران", englishName: "Aal-E-Imran", englishNameTranslation: "The Family of Imran", numberOfAyahs: 200, revelationType: "Medinan", audioUrl: "https://server6.mp3quran.net/qtm/003.mp3" },
@@ -208,7 +208,7 @@ const animeImageMap: { [key: string]: string } = {
     'Solo Leveling Season 2': 'https://i.ibb.co/nqty9RSq/unnamed-3.jpg',
 };
 
-export const AnimeData: Anime[] = Object.entries(rawAnimeData).map(([title, episodes], index) => {
+export const initialAnimeData: Anime[] = Object.entries(rawAnimeData).map(([title, episodes], index) => {
   const sanitizedTitle = title.replace(/\s+/g, '-').toLowerCase();
   const imageUrl = animeImageMap[title] || `https://picsum.photos/seed/${sanitizedTitle}/500/700`;
   return {
@@ -271,7 +271,7 @@ const stationsByCountry = {
 };
 
 let stationIdCounter = 1;
-export const RadioData: RadioStation[] = Object.entries(stationsByCountry).flatMap(([country, stationList]) => 
+export const initialRadioData: RadioStation[] = Object.entries(stationsByCountry).flatMap(([country, stationList]) => 
     stationList.map(station => ({
         id: stationIdCounter++,
         name: station.title,
@@ -284,7 +284,7 @@ export const RadioData: RadioStation[] = Object.entries(stationsByCountry).flatM
     }))
 );
 
-export const LiveTvData: LiveTvChannel[] = [
+export const initialLiveTvData: LiveTvChannel[] = [
     { id: 1, name: "Al Jazeera", logoUrl: "https://i.ibb.co/kXw2H6S/al-jazeera.png", streamUrl: "https://www.youtube.com/embed/live_stream?channel=UCNye-wNBqNL5ZzHSJj3l8Bg&autoplay=1", category: "News", type: 'embed' },
     { id: 4, name: "Duronto TV", logoUrl: "https://i.ibb.co/mHq3HJV/duronto-tv.png", streamUrl: "https://tvsen4.aynaott.com/durontotv/tracks-v1a1/mono.ts.m3u8", category: "Kids", type: "hls" },
     { id: 5, name: "Madani Channel Bangla", logoUrl: "https://i.ibb.co/CBr2Yv7/madani-channel-bangla.png", streamUrl: "https://streaming.madanichannel.tv/static/streaming-playlists/hls/d3e49b76-ac06-4689-a641-9200445b647f/0.m3u8", category: "Spiritual", type: "hls" },
