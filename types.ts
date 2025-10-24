@@ -17,7 +17,7 @@ export interface Episode {
 }
 
 export interface Anime {
-  id: number;
+  id: string;
   title: string;
   imageUrl: string;
   synopsis: string;
@@ -31,14 +31,14 @@ export interface RadioTrack {
 }
 
 export interface RadioStation {
-  id: number;
+  id: string;
   name: string;
   genre: string;
   tracks: RadioTrack[];
 }
 
 export interface LiveTvChannel {
-  id: number;
+  id: string;
   name: string;
   logoUrl: string;
   streamUrl: string;

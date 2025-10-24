@@ -64,10 +64,17 @@ const FmRadioPage: React.FC<FmRadioPageProps> = ({ stations }) => {
   const [loading, setLoading] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const [favorites, setFavorites] = useState<number[]>(() => {
+  const [favorites, setFavorites] = useState<string[]>(() => {
     try {
         const savedFavorites = localStorage.getItem('favoriteStations');
-        return savedFavorites ? JSON.parse(savedFavorites) : [];
+        if (savedFavorites) {
+            const parsed = JSON.parse(savedFavorites);
+            // Ensure we only load an array of strings, filtering out any old numeric IDs or other invalid data.
+            if (Array.isArray(parsed)) {
+                return parsed.filter(id => typeof id === 'string');
+            }
+        }
+        return [];
     } catch (error) {
         console.error("Could not parse favorite stations from localStorage", error);
         return [];
@@ -147,7 +154,7 @@ const FmRadioPage: React.FC<FmRadioPageProps> = ({ stations }) => {
     setSelectedStation(null);
   };
   
-  const toggleFavorite = (stationId: number) => {
+  const toggleFavorite = (stationId: string) => {
     setFavorites(prevFavorites => {
         if (prevFavorites.includes(stationId)) {
             return prevFavorites.filter(id => id !== stationId);
@@ -286,7 +293,7 @@ interface StationCardProps {
     station: RadioStation;
     isFavorite: boolean;
     onSelect: (station: RadioStation) => void;
-    onToggleFavorite: (id: number) => void;
+    onToggleFavorite: (id: string) => void;
 }
 
 const StationCard: React.FC<StationCardProps> = ({ station, isFavorite, onSelect, onToggleFavorite }) => {
