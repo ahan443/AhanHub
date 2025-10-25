@@ -97,6 +97,31 @@ const LiveTvPage: React.FC<LiveTvPageProps> = ({ channels }) => {
             ></iframe>
           )}
         </div>
+
+        <div className="mt-8 pt-6 border-t border-slate-700/50">
+            <h3 className="text-2xl font-bold text-white mb-4">More Channels</h3>
+            <div className="flex space-x-4 overflow-x-auto pb-4 -mx-1 px-1">
+                {channels
+                .filter(channel => channel.id !== selectedChannel.id)
+                .map(channel => (
+                    <div
+                    key={channel.id}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Play ${channel.name}`}
+                    onClick={() => setSelectedChannel(channel)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setSelectedChannel(channel); }}
+                    className="group cursor-pointer focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-lg transition-all duration-300 transform hover:-translate-y-1 focus:-translate-y-1 w-48 flex-shrink-0"
+                    >
+                    <div className="aspect-video bg-slate-800/50 rounded-lg shadow-lg flex items-center justify-center p-2 border border-slate-700/50 transition-all duration-300 group-hover:border-cyan-500/50 group-hover:bg-slate-700/80 group-focus:border-cyan-500/50 group-focus:bg-slate-700/80">
+                        <img src={channel.logoUrl} alt={`${channel.name} logo`} className="max-h-full max-w-full object-contain" />
+                    </div>
+                    <p className="text-center text-white text-sm font-semibold mt-2 px-1 truncate">{channel.name}</p>
+                    </div>
+                ))
+                }
+            </div>
+        </div>
       </div>
     );
   }

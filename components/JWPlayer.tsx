@@ -20,8 +20,10 @@ const JWPlayer: React.FC<JWPlayerProps> = ({ file, title }) => {
             return;
         }
 
+        // If player already exists, just load the new file and ensure it's unmuted
         if (playerInstance.current) {
             playerInstance.current.load([{ file, title }]);
+            playerInstance.current.setMute(false);
             return;
         }
         
@@ -33,6 +35,14 @@ const JWPlayer: React.FC<JWPlayerProps> = ({ file, title }) => {
             width: "100%",
             aspectratio: "16:9",
             autostart: true,
+            // Explicitly start with sound enabled. Browser may still override this.
+            mute: false,
+        });
+
+        // On player ready, explicitly try to unmute. 
+        // This has a higher chance of success after a user interaction (like clicking a channel).
+        player.on('ready', () => {
+            player.setMute(false);
         });
 
         playerInstance.current = player;

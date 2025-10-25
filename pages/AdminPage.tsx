@@ -29,6 +29,101 @@ type Tab = 'quran' | 'anime' | 'radio' | 'tv';
 type Mode = 'list' | 'add' | 'edit';
 type Item = Surah | Anime | RadioStation | LiveTvChannel;
 
+// --- ICONS ---
+
+const IconSun: React.FC = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+);
+
+const IconCalendar: React.FC = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+);
+
+const IconTrendingUp: React.FC = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+);
+
+const IconAnime: React.FC = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>);
+const IconQuran: React.FC = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v11.494m-9-5.996h18M12 6.253a2.5 2.5 0 100-5 2.5 2.5 0 000 5zm0 11.494a2.5 2.5 0 100 5 2.5 2.5 0 000-5zM5 8.253a2.5 2.5 0 00-2.5 2.5v3.5a2.5 2.5 0 105 0v-3.5a2.5 2.5 0 00-2.5-2.5zM19 8.253a2.5 2.5 0 00-2.5 2.5v3.5a2.5 2.5 0 105 0v-3.5a2.5 2.5 0 00-2.5-2.5z" /></svg>);
+const IconRadio: React.FC = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 6l12-3" /></svg>);
+const IconLiveTv: React.FC = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>);
+
+
+// --- DASHBOARD COMPONENTS ---
+
+const StatCard: React.FC<{ icon: React.ReactNode; label: string; value: string | number; big?: boolean }> = ({ icon, label, value, big = false }) => (
+    <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700 flex items-center space-x-4">
+        <div className={`bg-slate-700/50 p-3 rounded-full ${!big && 'hidden sm:block'}`}>
+            {icon}
+        </div>
+        <div>
+            <p className="text-gray-400 text-sm font-medium">{label}</p>
+            <p className={`${big ? 'text-3xl' : 'text-2xl'} font-bold text-white`}>{value}</p>
+        </div>
+    </div>
+);
+
+const AnalyticsDashboard: React.FC<{ data: AdminPageProps }> = ({ data }) => {
+    const [traffic, setTraffic] = useState({ today: 0, month: 0, year: 0 });
+
+    useEffect(() => {
+        // Simulate fetching traffic data
+        const today = Math.floor(Math.random() * (1500 - 300 + 1)) + 300;
+        const month = today * (Math.floor(Math.random() * (28 - 20 + 1)) + 20) + Math.floor(Math.random() * 5000);
+        const year = month * (Math.floor(Math.random() * (11 - 8 + 1)) + 8) + Math.floor(Math.random() * 50000);
+        
+        setTraffic({
+            today: today,
+            month: month,
+            year: year,
+        });
+    }, []);
+
+    const formatDate = (date: Date) => {
+        return date.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+
+    return (
+        <div className="mb-8">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
+                <div>
+                    <h2 className="text-2xl font-bold text-white">Welcome back, Admin!</h2>
+                    <p className="text-gray-400">{formatDate(new Date())}</p>
+                </div>
+                <button onClick={data.onLogout} className="bg-slate-700 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors inline-flex items-center self-start sm:self-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                    Logout
+                </button>
+            </div>
+            
+            {/* Website Traffic */}
+            <h3 className="text-lg font-semibold text-cyan-400 mb-4">Website Traffic</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <StatCard icon={<IconSun />} label="Today's Views" value={traffic.today.toLocaleString()} big />
+                <StatCard icon={<IconCalendar />} label="This Month's Views" value={traffic.month.toLocaleString()} big />
+                <StatCard icon={<IconTrendingUp />} label="This Year's Views" value={traffic.year.toLocaleString()} big />
+            </div>
+
+            {/* Content Overview */}
+            <h3 className="text-lg font-semibold text-cyan-400 mb-4">Content Overview</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <StatCard icon={<IconAnime />} label="Anime Series" value={data.animes.length} />
+                <StatCard icon={<IconQuran />} label="Quran Surahs" value={data.quran.length} />
+                <StatCard icon={<IconRadio />} label="Radio Stations" value={data.radioStations.length} />
+                <StatCard icon={<IconLiveTv />} label="TV Channels" value={data.tvChannels.length} />
+            </div>
+        </div>
+    )
+}
+
+// --- MAIN ADMIN PAGE COMPONENT ---
+
 const AdminPage: React.FC<AdminPageProps> = (props) => {
     const [activeTab, setActiveTab] = useState<Tab>('anime');
     const [mode, setMode] = useState<Mode>('list');
@@ -110,7 +205,7 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
         return (
             <div>
                  <button onClick={() => handleSetMode('add')} className="mb-4 bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg transition-colors inline-flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                     Add New
                 </button>
                 <div className="overflow-x-auto">
@@ -139,23 +234,21 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
     };
 
     return (
-        <div className="animate-fade-in">
-            <div className="flex justify-between items-center mb-4">
-                 <h2 className="text-2xl font-bold text-white">Manage Content</h2>
-                 <button onClick={props.onLogout} className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors inline-flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-                    Logout
-                </button>
-            </div>
-            <div className="bg-slate-800/50 border border-slate-700 rounded-lg shadow-lg">
-                <div className="flex border-b border-slate-700">
-                    <TabButton name="Anime" tab="anime" activeTab={activeTab} setActiveTab={setActiveTab} onSelect={() => handleSetMode('list')}/>
-                    <TabButton name="Quran" tab="quran" activeTab={activeTab} setActiveTab={setActiveTab} onSelect={() => handleSetMode('list')}/>
-                    <TabButton name="FM Radio" tab="radio" activeTab={activeTab} setActiveTab={setActiveTab} onSelect={() => handleSetMode('list')}/>
-                    <TabButton name="Live TV" tab="tv" activeTab={activeTab} setActiveTab={setActiveTab} onSelect={() => handleSetMode('list')}/>
-                </div>
-                <div className="p-4 sm:p-6">
-                    {renderContent()}
+        <div className="animate-fade-in space-y-8">
+            <AnalyticsDashboard data={props} />
+
+            <div>
+                 <h3 className="text-lg font-semibold text-cyan-400 mb-4">Manage Content</h3>
+                <div className="bg-slate-800/50 border border-slate-700 rounded-lg shadow-lg">
+                    <div className="flex border-b border-slate-700 overflow-x-auto">
+                        <TabButton name="Anime" tab="anime" activeTab={activeTab} setActiveTab={setActiveTab} onSelect={() => handleSetMode('list')}/>
+                        <TabButton name="Quran" tab="quran" activeTab={activeTab} setActiveTab={setActiveTab} onSelect={() => handleSetMode('list')}/>
+                        <TabButton name="FM Radio" tab="radio" activeTab={activeTab} setActiveTab={setActiveTab} onSelect={() => handleSetMode('list')}/>
+                        <TabButton name="Live TV" tab="tv" activeTab={activeTab} setActiveTab={setActiveTab} onSelect={() => handleSetMode('list')}/>
+                    </div>
+                    <div className="p-4 sm:p-6">
+                        {renderContent()}
+                    </div>
                 </div>
             </div>
         </div>
@@ -169,7 +262,7 @@ const TabButton: React.FC<{ name: string; tab: Tab; activeTab: Tab; setActiveTab
     return (
         <button
             onClick={() => { setActiveTab(tab); onSelect(); }}
-            className={`px-4 py-3 sm:px-6 font-semibold text-sm transition-colors focus:outline-none ${isActive ? 'bg-slate-700/50 text-cyan-400 border-b-2 border-cyan-400' : 'text-gray-400 hover:bg-slate-700/20'}`}
+            className={`flex-shrink-0 whitespace-nowrap px-4 py-3 sm:px-6 font-semibold text-sm transition-colors focus:outline-none ${isActive ? 'bg-slate-700/50 text-cyan-400 border-b-2 border-cyan-400' : 'text-gray-400 hover:bg-slate-700/20'}`}
         >
             {name}
         </button>
@@ -179,21 +272,21 @@ const TabButton: React.FC<{ name: string; tab: Tab; activeTab: Tab; setActiveTab
 const FormInput: React.FC<React.InputHTMLAttributes<HTMLInputElement> & { label: string }> = ({ label, ...props }) => (
     <div className="mb-4">
         <label htmlFor={props.id} className="block text-gray-300 text-sm font-bold mb-2">{label}</label>
-        <input {...props} className="w-full px-3 py-2 text-white bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition-colors" />
+        <input {...props} className="w-full px-3 py-2.5 text-white bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition-colors" />
     </div>
 );
 
 const FormTextarea: React.FC<React.TextareaHTMLAttributes<HTMLTextAreaElement> & { label: string }> = ({ label, ...props }) => (
     <div className="mb-4">
         <label htmlFor={props.id} className="block text-gray-300 text-sm font-bold mb-2">{label}</label>
-        <textarea {...props} className="w-full px-3 py-2 text-white bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition-colors" />
+        <textarea {...props} className="w-full px-3 py-2.5 text-white bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition-colors" />
     </div>
 );
 
 const FormSelect: React.FC<React.SelectHTMLAttributes<HTMLSelectElement> & { label: string }> = ({ label, children, ...props }) => (
     <div className="mb-4">
         <label htmlFor={props.id} className="block text-gray-300 text-sm font-bold mb-2">{label}</label>
-        <select {...props} className="w-full px-3 py-2 text-white bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition-colors">
+        <select {...props} className="w-full px-3 py-2.5 text-white bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition-colors">
             {children}
         </select>
     </div>
@@ -430,9 +523,6 @@ const TvForm: React.FC<FormProps<LiveTvChannel>> = ({ onAdd, onUpdate, initialDa
 
     useEffect(() => {
         if (initialData) {
-            // FIX: Explicitly map properties from initialData to the form state.
-            // This ensures the state shape is correct, provides a default for the optional `type` property,
-            // and avoids incorrectly including the `id` in the form state.
             setFormState({
                 name: initialData.name,
                 logoUrl: initialData.logoUrl,

@@ -34,17 +34,42 @@ const QuranPageLoader = () => (
     </div>
 );
 
+const AutoNextToggleIcon: React.FC<{ enabled: boolean }> = ({ enabled }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" className={`h-6 w-6 transition-colors ${enabled ? 'text-cyan-400' : 'text-gray-500'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+    {!enabled && (
+       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 19L19 5" />
+    )}
+  </svg>
+);
+
 
 const QuranPage: React.FC<QuranPageProps> = ({ surahs }) => {
   const [selectedSurah, setSelectedSurah] = useState<Surah | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
+  const [isAutoNextEnabled, setIsAutoNextEnabled] = useState(() => {
+    try {
+      const saved = localStorage.getItem('quranAutoNextEnabled');
+      return saved !== 'false';
+    } catch {
+      return true;
+    }
+  });
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1000);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('quranAutoNextEnabled', String(isAutoNextEnabled));
+    } catch (e) {
+      console.error("Failed to save auto-next preference:", e);
+    }
+  }, [isAutoNextEnabled]);
 
   const handleSelectSurah = useCallback((surah: Surah) => {
     setSelectedSurah(surah);
@@ -66,6 +91,16 @@ const QuranPage: React.FC<QuranPageProps> = ({ surahs }) => {
       surah.number.toString().includes(term)
     );
   });
+
+  const handleAudioEnded = useCallback(() => {
+    if (!isAutoNextEnabled || !selectedSurah) return;
+
+    const currentIndex = filteredSurahs.findIndex(s => s.number === selectedSurah.number);
+    if (currentIndex > -1 && currentIndex < filteredSurahs.length - 1) {
+        const nextSurah = filteredSurahs[currentIndex + 1];
+        handleSelectSurah(nextSurah);
+    }
+  }, [isAutoNextEnabled, selectedSurah, filteredSurahs, handleSelectSurah]);
 
   if (loading) {
     return <QuranPageLoader />;
@@ -98,7 +133,7 @@ const QuranPage: React.FC<QuranPageProps> = ({ surahs }) => {
                         {selectedSurah.revelationType} &bull; {selectedSurah.numberOfAyahs} Ayahs
                     </div>
                 </div>
-                <div className="p-6 bg-slate-900/50">
+                <div className="p-6 bg-slate-900/50 flex items-center gap-4">
                     <audio
                         ref={audioRef}
                         controls
@@ -106,9 +141,18 @@ const QuranPage: React.FC<QuranPageProps> = ({ surahs }) => {
                         key={selectedSurah.audioUrl}
                         src={selectedSurah.audioUrl}
                         autoPlay
+                        onEnded={handleAudioEnded}
                     >
                         Your browser does not support the audio element.
                     </audio>
+                    <button
+                        onClick={() => setIsAutoNextEnabled(prev => !prev)}
+                        className="p-3 rounded-full hover:bg-slate-700/50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-cyan-500"
+                        aria-label={isAutoNextEnabled ? "Disable Auto-Next" : "Enable Auto-Next"}
+                        title={isAutoNextEnabled ? "Auto-Next Enabled" : "Auto-Next Disabled"}
+                    >
+                        <AutoNextToggleIcon enabled={isAutoNextEnabled} />
+                    </button>
                 </div>
             </div>
         </div>
