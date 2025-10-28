@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { Surah, Anime, RadioStation, LiveTvChannel, Episode, RadioTrack } from '../types';
+import { generateSurahSummary, generateAnimeSynopsis } from '../services/geminiService';
+
 
 type AdminPageProps = {
     quran: Surah[];
@@ -315,6 +317,21 @@ const FormMessage: React.FC<{ message: string; type: 'success' | 'error'}> = ({ 
     return <div className={`mt-4 p-3 border rounded-lg ${colors}`}>{message}</div>;
 }
 
+const GenerateAIButton: React.FC<{ isGenerating: boolean; onClick: () => void; }> = ({ isGenerating, onClick }) => (
+    <div className="flex justify-end -mt-2 mb-4">
+        <button
+            type="button"
+            onClick={onClick}
+            disabled={isGenerating}
+            className="flex items-center space-x-2 text-xs font-semibold text-cyan-400 hover:text-cyan-300 disabled:text-gray-500 disabled:cursor-not-allowed transition-colors"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 ${isGenerating ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.293 2.293a1 1 0 01-1.414 1.414L12 6.414l-2.293 2.293a1 1 0 01-1.414-1.414L10 5m0 14l2.293-2.293a1 1 0 011.414 1.414L12 17.586l2.293-2.293a1 1 0 011.414 1.414L14 19m-4-5a2 2 0 114 0 2 2 0 01-4 0z" /></svg>
+            <span>{isGenerating ? 'Generating...' : 'Generate with Gemini'}</span>
+        </button>
+    </div>
+);
+
+
 // --- Specific Forms ---
 
 interface FormProps<T> {
@@ -329,6 +346,7 @@ const AnimeForm: React.FC<FormProps<Anime>> = ({ onAdd, onUpdate, initialData, o
     const [episodes, setEpisodes] = useState<string>('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [isGenerating, setIsGenerating] = useState(false);
 
     useEffect(() => {
         if (initialData) {
@@ -337,6 +355,24 @@ const AnimeForm: React.FC<FormProps<Anime>> = ({ onAdd, onUpdate, initialData, o
             setEpisodes(JSON.stringify(episodes, null, 2));
         }
     }, [initialData]);
+
+    const handleGenerateSynopsis = async () => {
+        if (!formState.title) {
+            setError("Please enter a Title first to generate a synopsis.");
+            return;
+        }
+        setIsGenerating(true);
+        setError('');
+        try {
+            const synopsis = await generateAnimeSynopsis(formState.title);
+            setFormState(prev => ({ ...prev, synopsis: synopsis }));
+        } catch (e: any) {
+            setError(e.message || "Failed to generate synopsis.");
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -381,6 +417,7 @@ const AnimeForm: React.FC<FormProps<Anime>> = ({ onAdd, onUpdate, initialData, o
             <FormInput label="Title" id="title" name="title" value={formState.title} onChange={handleChange} required />
             <FormInput label="Image URL" id="imageUrl" name="imageUrl" type="url" value={formState.imageUrl} onChange={handleChange} required />
             <FormTextarea label="Synopsis" id="synopsis" name="synopsis" rows={4} value={formState.synopsis} onChange={handleChange} required />
+            <GenerateAIButton isGenerating={isGenerating} onClick={handleGenerateSynopsis} />
             <FormTextarea label="Episodes (JSON format)" id="episodes" name="episodes" rows={5} value={episodes} onChange={(e) => setEpisodes(e.target.value)} placeholder='[&#10;  { "number": 1, "title": "Episode 1", "videoUrl": "https://.../embed-1.html" },&#10;  { "number": 2, "title": "Episode 2", "videoUrl": "https://.../embed-2.html" }&#10;]' />
             <FormActions onCancel={onCancel} submitText={isEditing ? 'Update Anime' : 'Add Anime'} />
             <FormMessage message={message} type="success" />
@@ -390,9 +427,10 @@ const AnimeForm: React.FC<FormProps<Anime>> = ({ onAdd, onUpdate, initialData, o
 };
 
 const QuranForm: React.FC<FormProps<Surah>> = ({ onAdd, onUpdate, initialData, onCancel }) => {
-     const [formState, setFormState] = useState({ number: '', name: '', englishName: '', englishNameTranslation: '', revelationType: 'Meccan', numberOfAyahs: '', audioUrl: '' });
+     const [formState, setFormState] = useState({ number: '', name: '', englishName: '', englishNameTranslation: '', revelationType: 'Meccan', numberOfAyahs: '', audioUrl: '', description: '' });
      const [message, setMessage] = useState('');
      const [error, setError] = useState('');
+     const [isGenerating, setIsGenerating] = useState(false);
 
     useEffect(() => {
         if (initialData) {
@@ -404,9 +442,27 @@ const QuranForm: React.FC<FormProps<Surah>> = ({ onAdd, onUpdate, initialData, o
                 revelationType: initialData.revelationType || 'Meccan',
                 numberOfAyahs: String(initialData.numberOfAyahs || ''),
                 audioUrl: initialData.audioUrl,
+                description: initialData.description || '',
             });
         }
     }, [initialData]);
+
+     const handleGenerateSummary = async () => {
+        if (!formState.englishName) {
+            setError("Please enter an English Name first to generate a summary.");
+            return;
+        }
+        setIsGenerating(true);
+        setError('');
+        try {
+            const summary = await generateSurahSummary(formState.englishName);
+            setFormState(prev => ({ ...prev, description: summary }));
+        } catch (e: any) {
+            setError(e.message || "Failed to generate summary.");
+        } finally {
+            setIsGenerating(false);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -440,7 +496,7 @@ const QuranForm: React.FC<FormProps<Surah>> = ({ onAdd, onUpdate, initialData, o
         }
     };
 
-     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         setFormState(prev => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
@@ -459,6 +515,8 @@ const QuranForm: React.FC<FormProps<Surah>> = ({ onAdd, onUpdate, initialData, o
                 <option>Meccan</option>
                 <option>Medinan</option>
             </FormSelect>
+            <FormTextarea label="Description" id="description" name="description" rows={4} value={formState.description} onChange={handleChange} />
+            <GenerateAIButton isGenerating={isGenerating} onClick={handleGenerateSummary} />
             <FormActions onCancel={onCancel} submitText={isEditing ? 'Update Surah' : 'Add Surah'} />
             <FormMessage message={message} type="success" />
             <FormMessage message={error} type="error" />

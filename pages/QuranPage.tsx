@@ -128,6 +128,11 @@ const QuranPage: React.FC<QuranPageProps> = ({ surahs }) => {
                         {selectedSurah.revelationType} &bull; {selectedSurah.numberOfAyahs} Ayahs
                     </div>
                 </div>
+                 {selectedSurah.description && (
+                    <div className="p-6 border-y border-slate-800 bg-black/10">
+                        <p className="text-gray-300 leading-relaxed">{selectedSurah.description}</p>
+                    </div>
+                )}
                 <div className="p-6 bg-black/30 flex items-center gap-4">
                     <audio
                         ref={audioRef}

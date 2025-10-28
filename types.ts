@@ -7,6 +7,7 @@ export interface Surah {
   revelationType?: string;
   numberOfAyahs?: number;
   audioUrl: string;
+  description?: string;
 }
 
 export interface Episode {

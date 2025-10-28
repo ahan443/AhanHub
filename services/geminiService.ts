@@ -1,16 +1,30 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-// The API key is provided by the environment, but the functions below have been
-// disabled to prevent quota errors.
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const generateSurahSummary = async (surahName: string): Promise<string> => {
-  console.error("Error generating Surah summary: Quota exceeded. This feature has been disabled.");
-  return "Could not generate summary at this time.";
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: `Provide a brief, insightful summary of Surah ${surahName} from the Quran. Focus on its central themes and key messages.`,
+    });
+    return response.text;
+  } catch (error) {
+    console.error("Error generating Surah summary:", error);
+    throw new Error("Could not generate summary. Please check API configuration or quota.");
+  }
 };
 
 export const generateAnimeSynopsis = async (title: string): Promise<string> => {
-  console.error("Error generating anime synopsis: Quota exceeded. This feature has been disabled.");
-  return "A thrilling adventure awaits in this new series!";
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: `Generate a brief, exciting, and compelling synopsis for an anime series titled "${title}". Focus on the main plot points and characters to entice potential viewers.`,
+    });
+    return response.text;
+  } catch (error) {
+    console.error("Error generating anime synopsis:", error);
+    throw new Error("Could not generate synopsis. Please check API configuration or quota.");
+  }
 };
