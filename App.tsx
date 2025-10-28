@@ -238,7 +238,7 @@ const App: React.FC = () => {
     const isLoginPage = location.pathname === '/admin-login';
 
     return (
-      <div className="flex h-screen bg-transparent text-gray-200 overflow-hidden">
+      <div className="flex h-full bg-transparent text-gray-200">
         {!isLoginPage && <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />}
         <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
             {/* Mobile Header */}
