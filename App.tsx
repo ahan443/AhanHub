@@ -240,7 +240,7 @@ const App: React.FC = () => {
     return (
       <div className="flex h-screen bg-transparent text-gray-200 overflow-hidden">
         {!isLoginPage && <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />}
-        <div className="flex flex-col flex-1 w-full lg:w-auto overflow-hidden">
+        <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
             {/* Mobile Header */}
             {!isLoginPage && (
               <header className="lg:hidden flex items-center justify-between p-4 shrink-0 border-b border-slate-800 bg-slate-900/60 backdrop-blur-sm">
