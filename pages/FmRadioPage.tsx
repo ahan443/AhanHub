@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import type { RadioStation } from '../types';
 
@@ -41,12 +42,12 @@ const FmRadioPageLoader = () => (
                 <div className="h-6 w-32 bg-slate-700/50 rounded animate-pulse mb-4 px-1"></div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                     {Array.from({ length: 10 }).map((_, i) => (
-                        <div key={i} className="bg-slate-800/50 p-4 rounded-lg animate-pulse text-center">
+                        <div key={i} className="bg-slate-900/50 border border-slate-800 p-4 rounded-xl animate-pulse text-center">
                             <div className="flex items-center justify-center h-20 mb-3">
-                                <div className="h-12 w-12 bg-slate-700/50 rounded-full"></div>
+                                <div className="h-12 w-12 bg-slate-800 rounded-full"></div>
                             </div>
-                            <div className="h-4 w-24 bg-slate-700/50 rounded mx-auto"></div>
-                            <div className="h-3 w-16 bg-slate-700/50 rounded mx-auto mt-2"></div>
+                            <div className="h-4 w-24 bg-slate-800 rounded mx-auto"></div>
+                            <div className="h-3 w-16 bg-slate-800 rounded mx-auto mt-2"></div>
                         </div>
                     ))}
                 </div>
@@ -61,7 +62,6 @@ const FmRadioPage: React.FC<FmRadioPageProps> = ({ stations }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const [favorites, setFavorites] = useState<string[]>(() => {
@@ -82,11 +82,6 @@ const FmRadioPage: React.FC<FmRadioPageProps> = ({ stations }) => {
   });
   
   const genres = useMemo(() => ['All', ...Array.from(new Set(stations.map(s => s.genre)))], [stations]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     try {
@@ -164,7 +159,7 @@ const FmRadioPage: React.FC<FmRadioPageProps> = ({ stations }) => {
     });
   };
 
-  if (loading) {
+  if (stations.length === 0) {
     return <FmRadioPageLoader />;
   }
 
@@ -173,7 +168,7 @@ const FmRadioPage: React.FC<FmRadioPageProps> = ({ stations }) => {
       <div className="animate-fade-in relative flex flex-col items-center justify-center min-h-[calc(100vh-8rem)]">
          <button
           onClick={handleGoBack}
-          className="absolute top-0 left-0 bg-slate-700/50 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center transition-colors z-10"
+          className="absolute top-0 left-0 bg-slate-800/50 hover:bg-slate-700/80 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center transition-colors z-10"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -181,11 +176,11 @@ const FmRadioPage: React.FC<FmRadioPageProps> = ({ stations }) => {
           Back to List
         </button>
 
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-900 to-cyan-900/50 -z-10 rounded-lg"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-900 to-cyan-900/40 -z-10 rounded-lg"></div>
 
         <div className="w-full max-w-md text-center p-8">
-            <div className={`relative w-64 h-64 mx-auto mb-8 bg-slate-800 rounded-full flex items-center justify-center shadow-2xl shadow-cyan-900/40 border-4 border-slate-700/50`}>
-                <div className={`absolute inset-0 bg-cyan-500/20 rounded-full transition-transform duration-500 ${isPlaying ? 'scale-100 animate-pulse' : 'scale-0'}`}></div>
+            <div className={`relative w-64 h-64 mx-auto mb-8 bg-gradient-to-br from-slate-900 to-slate-800 rounded-full flex items-center justify-center shadow-2xl shadow-cyan-900/20 border-4 border-slate-800`}>
+                <div className={`absolute inset-0 rounded-full transition-all duration-500 ${isPlaying ? 'scale-100 animate-pulse shadow-[0_0_40px_10px_rgba(34,211,238,0.2)] bg-cyan-500/10' : 'scale-0'}`}></div>
                  <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 text-cyan-400 z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 6l12-3" />
                 </svg>
@@ -239,16 +234,16 @@ const FmRadioPage: React.FC<FmRadioPageProps> = ({ stations }) => {
                     placeholder="Search stations or countries..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full max-w-lg pl-10 pr-4 py-2.5 text-white bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:border-cyan-500 transition-colors"
+                    className="w-full max-w-lg pl-10 pr-4 py-2.5 text-white bg-slate-900/70 border border-slate-800 rounded-lg focus:outline-none focus:border-cyan-500 transition-colors"
                     aria-label="Search Stations"
                 />
             </div>
-            <div className="flex items-center space-x-2 overflow-x-auto pb-2 -mx-1 px-1">
+            <div className="flex items-center space-x-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
                 {genres.map(genre => (
                     <button 
                         key={genre}
                         onClick={() => setSelectedGenre(genre === 'All' ? null : genre)}
-                        className={`shrink-0 px-4 py-2 text-sm font-semibold rounded-full transition-colors ${selectedGenre === genre || (genre === 'All' && !selectedGenre) ? 'bg-cyan-500 text-white' : 'bg-slate-700/50 text-gray-300 hover:bg-slate-700'}`}
+                        className={`shrink-0 px-4 py-2 text-sm font-semibold rounded-full transition-colors ${selectedGenre === genre || (genre === 'All' && !selectedGenre) ? 'bg-cyan-500 text-white' : 'bg-slate-800/50 text-gray-300 hover:bg-slate-700'}`}
                     >
                         {genre}
                     </button>
@@ -298,7 +293,7 @@ interface StationCardProps {
 
 const StationCard: React.FC<StationCardProps> = ({ station, isFavorite, onSelect, onToggleFavorite }) => {
     return (
-        <div onClick={() => onSelect(station)} className="group relative bg-slate-800/50 p-4 rounded-lg cursor-pointer transition-all duration-300 hover:bg-slate-700/80 hover:shadow-cyan-500/10 hover:shadow-lg hover:-translate-y-1 text-center">
+        <div onClick={() => onSelect(station)} className="group relative bg-slate-900/50 backdrop-blur-sm border border-slate-800 p-4 rounded-xl cursor-pointer transition-all duration-300 hover:border-cyan-500/50 hover:bg-slate-800/50 hover:-translate-y-1 text-center">
             <button
                 onClick={(e) => {
                     e.stopPropagation();

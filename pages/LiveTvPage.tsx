@@ -1,6 +1,7 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+
+import React, { useState, useMemo, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import type { LiveTvChannel } from '../types';
-import JWPlayer from '../components/JWPlayer';
 
 interface LiveTvPageProps {
   channels: LiveTvChannel[];
@@ -33,23 +34,8 @@ const LiveTvPageLoader = () => (
 
 
 const LiveTvPage: React.FC<LiveTvPageProps> = ({ channels }) => {
-  const [selectedChannel, setSelectedChannel] = useState<LiveTvChannel | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const backButtonRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (selectedChannel && backButtonRef.current) {
-      backButtonRef.current.focus();
-    }
-  }, [selectedChannel]);
-
 
   const categories = useMemo(() => ['All', ...Array.from(new Set(channels.map(c => c.category)))], [channels]);
 
@@ -61,69 +47,8 @@ const LiveTvPage: React.FC<LiveTvPageProps> = ({ channels }) => {
     });
   }, [channels, searchTerm, selectedCategory]);
 
-  if (loading) {
+  if (channels.length === 0) {
     return <LiveTvPageLoader />;
-  }
-
-  if (selectedChannel) {
-    const useJwPlayer = selectedChannel.type === 'hls' || selectedChannel.streamUrl.endsWith('.m3u8');
-
-    return (
-      <div className="animate-fade-in">
-        <button
-          ref={backButtonRef}
-          onClick={() => setSelectedChannel(null)}
-          className="mb-6 bg-slate-700/50 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-cyan-500"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          Back to Channel List
-        </button>
-
-        <h2 className="text-3xl font-bold text-cyan-400 mb-4">{selectedChannel.name}</h2>
-        
-        <div className="aspect-video bg-black rounded-lg shadow-2xl shadow-cyan-900/20 border border-slate-700/50 overflow-hidden">
-          {useJwPlayer ? (
-             <JWPlayer key={selectedChannel.id} file={selectedChannel.streamUrl} title={selectedChannel.name} />
-          ) : (
-            <iframe
-              src={selectedChannel.streamUrl}
-              title={`${selectedChannel.name} Live Stream`}
-              className="w-full h-full"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-          )}
-        </div>
-
-        <div className="mt-8 pt-6 border-t border-slate-700/50">
-            <h3 className="text-2xl font-bold text-white mb-4">More Channels</h3>
-            <div className="flex space-x-4 overflow-x-auto pb-4 -mx-1 px-1">
-                {channels
-                .filter(channel => channel.id !== selectedChannel.id)
-                .map(channel => (
-                    <div
-                    key={channel.id}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`Play ${channel.name}`}
-                    onClick={() => setSelectedChannel(channel)}
-                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setSelectedChannel(channel); }}
-                    className="group cursor-pointer focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-lg transition-all duration-300 transform hover:-translate-y-1 focus:-translate-y-1 w-48 flex-shrink-0"
-                    >
-                    <div className="aspect-video bg-slate-800/50 rounded-lg shadow-lg flex items-center justify-center p-2 border border-slate-700/50 transition-all duration-300 group-hover:border-cyan-500/50 group-hover:bg-slate-700/80 group-focus:border-cyan-500/50 group-focus:bg-slate-700/80">
-                        <img src={channel.logoUrl} alt={`${channel.name} logo`} className="max-h-full max-w-full object-contain" />
-                    </div>
-                    <p className="text-center text-white text-sm font-semibold mt-2 px-1 truncate">{channel.name}</p>
-                    </div>
-                ))
-                }
-            </div>
-        </div>
-      </div>
-    );
   }
 
   return (
@@ -141,16 +66,16 @@ const LiveTvPage: React.FC<LiveTvPageProps> = ({ channels }) => {
             placeholder="Search channels..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full max-w-lg pl-10 pr-4 py-2.5 text-white bg-slate-800/50 border border-slate-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-cyan-500 focus:border-transparent"
+            className="w-full max-w-lg pl-10 pr-4 py-2.5 text-white bg-slate-900/70 border border-slate-800 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-cyan-500 focus:border-transparent"
             aria-label="Search TV Channels"
           />
         </div>
-        <div className="flex items-center space-x-2 overflow-x-auto pb-2 -mx-1 px-1">
+        <div className="flex items-center space-x-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
           {categories.map(category => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category === 'All' ? null : category)}
-              className={`shrink-0 px-4 py-2 text-sm font-semibold rounded-full transition-colors ${selectedCategory === category || (category === 'All' && !selectedCategory) ? 'bg-cyan-500 text-white' : 'bg-slate-700/50 text-gray-300 hover:bg-slate-700'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-cyan-500`}
+              className={`shrink-0 px-4 py-2 text-sm font-semibold rounded-full transition-colors ${selectedCategory === category || (category === 'All' && !selectedCategory) ? 'bg-cyan-500 text-white' : 'bg-slate-800/50 text-gray-300 hover:bg-slate-700'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-cyan-500`}
             >
               {category}
             </button>
@@ -162,21 +87,18 @@ const LiveTvPage: React.FC<LiveTvPageProps> = ({ channels }) => {
         {filteredChannels.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {filteredChannels.map(channel => (
-              <div
+              <Link
                 key={channel.id}
-                role="button"
-                tabIndex={0}
+                to={`/live-tv/${channel.id}`}
                 aria-label={`Play ${channel.name}`}
-                onClick={() => setSelectedChannel(channel)}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setSelectedChannel(channel); }}
-                className="group cursor-pointer focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-lg transition-all duration-300 transform hover:-translate-y-1 focus:-translate-y-1 hover:scale-105 focus:scale-105"
+                className="group cursor-pointer focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-lg transition-all duration-300 transform hover:-translate-y-1 focus:-translate-y-1"
               >
-                <div className="aspect-video bg-slate-800/50 rounded-lg shadow-lg flex items-center justify-center p-3 border border-slate-700/50 transition-all duration-300 group-hover:border-cyan-500/50 group-hover:bg-slate-700/80 group-focus:border-cyan-500/50 group-focus:bg-slate-700/80">
+                <div className="aspect-video bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-lg shadow-lg flex items-center justify-center p-3 transition-all duration-300 group-hover:border-cyan-500/50 group-hover:bg-slate-800/50 group-focus:border-cyan-500/50 group-focus:bg-slate-800/50">
                   <img src={channel.logoUrl} alt={`${channel.name} logo`} className="max-h-full max-w-full object-contain" />
                 </div>
                 <p className="text-center text-white font-semibold mt-2 px-1 truncate">{channel.name}</p>
                 <p className="text-center text-gray-400 text-xs px-1">{channel.category}</p>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (

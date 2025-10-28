@@ -52,8 +52,8 @@ const IconLiveTv: React.FC = () => (<svg xmlns="http://www.w3.org/2000/svg" clas
 // --- DASHBOARD COMPONENTS ---
 
 const StatCard: React.FC<{ icon: React.ReactNode; label: string; value: string | number; big?: boolean }> = ({ icon, label, value, big = false }) => (
-    <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700 flex items-center space-x-4">
-        <div className={`bg-slate-700/50 p-3 rounded-full ${!big && 'hidden sm:block'}`}>
+    <div className="bg-gradient-to-br from-slate-900 to-slate-800/50 p-6 rounded-xl border border-slate-800 flex items-center space-x-4 transition-all hover:border-cyan-500/50 hover:-translate-y-1">
+        <div className={`bg-slate-800/50 p-3 rounded-full ${!big && 'hidden sm:block'}`}>
             {icon}
         </div>
         <div>
@@ -139,7 +139,7 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
     }
 
     const handleDelete = async (item: Item) => {
-        const title = (item as any).name || (item as any).title;
+        const title = (item as any).name || (item as any).title || (item as any).englishName;
         if (!window.confirm(`Are you sure you want to delete "${title}"?`)) return;
 
         try {
@@ -157,13 +157,19 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
 
     const renderContent = () => {
         if (mode === 'add' || mode === 'edit') {
-            switch (activeTab) {
-                case 'anime': return <AnimeForm onAdd={props.onAddAnime} onUpdate={props.onUpdateAnime} initialData={currentItem as Anime | null} onCancel={handleCancel} />;
-                case 'quran': return <QuranForm onAdd={props.onAddSurah} onUpdate={props.onUpdateSurah} initialData={currentItem as Surah | null} onCancel={handleCancel} />;
-                case 'radio': return <RadioForm onAdd={props.onAddRadioStation} onUpdate={props.onUpdateRadioStation} initialData={currentItem as RadioStation | null} onCancel={handleCancel} />;
-                case 'tv': return <TvForm onAdd={props.onAddLiveTvChannel} onUpdate={props.onUpdateLiveTvChannel} initialData={currentItem as LiveTvChannel | null} onCancel={handleCancel} />;
-                default: return null;
-            }
+            return (
+                <div className="max-w-2xl mx-auto">
+                    {(() => {
+                        switch (activeTab) {
+                            case 'anime': return <AnimeForm onAdd={props.onAddAnime} onUpdate={props.onUpdateAnime} initialData={currentItem as Anime | null} onCancel={handleCancel} />;
+                            case 'quran': return <QuranForm onAdd={props.onAddSurah} onUpdate={props.onUpdateSurah} initialData={currentItem as Surah | null} onCancel={handleCancel} />;
+                            case 'radio': return <RadioForm onAdd={props.onAddRadioStation} onUpdate={props.onUpdateRadioStation} initialData={currentItem as RadioStation | null} onCancel={handleCancel} />;
+                            case 'tv': return <TvForm onAdd={props.onAddLiveTvChannel} onUpdate={props.onUpdateLiveTvChannel} initialData={currentItem as LiveTvChannel | null} onCancel={handleCancel} />;
+                            default: return null;
+                        }
+                    })()}
+                </div>
+            );
         }
 
         // List View
@@ -209,16 +215,16 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
                     Add New
                 </button>
                 <div className="overflow-x-auto">
-                    <table className="min-w-full bg-slate-700/30 rounded-lg">
-                        <thead>
-                            <tr className="border-b border-slate-600">
+                    <table className="min-w-full bg-slate-900/50 rounded-lg">
+                        <thead className="bg-slate-800/50">
+                            <tr className="border-b border-slate-800">
                                 {columns.map(col => <th key={col.header} className="px-5 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">{col.header}</th>)}
                                 <th className="px-5 py-3 text-right text-xs font-semibold text-gray-300 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {data.map((item, index) => (
-                                <tr key={index} className="border-b border-slate-700/50 hover:bg-slate-700/50">
+                                <tr key={index} className="border-b border-slate-800 hover:bg-slate-800/50">
                                     {columns.map(col => <td key={col.header} className="px-5 py-4 whitespace-nowrap text-sm text-gray-200">{col.accessor(item)}</td>)}
                                     <td className="px-5 py-4 whitespace-nowrap text-sm font-medium text-right space-x-2">
                                         <button onClick={() => handleSetMode('edit', item)} className="text-cyan-400 hover:text-cyan-300">Edit</button>
@@ -239,8 +245,8 @@ const AdminPage: React.FC<AdminPageProps> = (props) => {
 
             <div>
                  <h3 className="text-lg font-semibold text-cyan-400 mb-4">Manage Content</h3>
-                <div className="bg-slate-800/50 border border-slate-700 rounded-lg shadow-lg">
-                    <div className="flex border-b border-slate-700 overflow-x-auto">
+                <div className="bg-slate-900/60 backdrop-blur-sm border border-slate-800 rounded-lg shadow-lg">
+                    <div className="flex border-b border-slate-800 overflow-x-auto">
                         <TabButton name="Anime" tab="anime" activeTab={activeTab} setActiveTab={setActiveTab} onSelect={() => handleSetMode('list')}/>
                         <TabButton name="Quran" tab="quran" activeTab={activeTab} setActiveTab={setActiveTab} onSelect={() => handleSetMode('list')}/>
                         <TabButton name="FM Radio" tab="radio" activeTab={activeTab} setActiveTab={setActiveTab} onSelect={() => handleSetMode('list')}/>
@@ -262,7 +268,7 @@ const TabButton: React.FC<{ name: string; tab: Tab; activeTab: Tab; setActiveTab
     return (
         <button
             onClick={() => { setActiveTab(tab); onSelect(); }}
-            className={`flex-shrink-0 whitespace-nowrap px-4 py-3 sm:px-6 font-semibold text-sm transition-colors focus:outline-none ${isActive ? 'bg-slate-700/50 text-cyan-400 border-b-2 border-cyan-400' : 'text-gray-400 hover:bg-slate-700/20'}`}
+            className={`flex-shrink-0 whitespace-nowrap px-4 py-3 sm:px-6 font-semibold text-sm transition-colors focus:outline-none ${isActive ? 'bg-slate-800/50 text-cyan-400 border-b-2 border-cyan-400' : 'text-gray-400 hover:bg-slate-800/20'}`}
         >
             {name}
         </button>
@@ -272,21 +278,21 @@ const TabButton: React.FC<{ name: string; tab: Tab; activeTab: Tab; setActiveTab
 const FormInput: React.FC<React.InputHTMLAttributes<HTMLInputElement> & { label: string }> = ({ label, ...props }) => (
     <div className="mb-4">
         <label htmlFor={props.id} className="block text-gray-300 text-sm font-bold mb-2">{label}</label>
-        <input {...props} className="w-full px-3 py-2.5 text-white bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition-colors" />
+        <input {...props} className="w-full px-3 py-2.5 text-white bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:border-cyan-500 transition-colors" />
     </div>
 );
 
 const FormTextarea: React.FC<React.TextareaHTMLAttributes<HTMLTextAreaElement> & { label: string }> = ({ label, ...props }) => (
     <div className="mb-4">
         <label htmlFor={props.id} className="block text-gray-300 text-sm font-bold mb-2">{label}</label>
-        <textarea {...props} className="w-full px-3 py-2.5 text-white bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition-colors" />
+        <textarea {...props} className="w-full px-3 py-2.5 text-white bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:border-cyan-500 transition-colors" />
     </div>
 );
 
 const FormSelect: React.FC<React.SelectHTMLAttributes<HTMLSelectElement> & { label: string }> = ({ label, children, ...props }) => (
     <div className="mb-4">
         <label htmlFor={props.id} className="block text-gray-300 text-sm font-bold mb-2">{label}</label>
-        <select {...props} className="w-full px-3 py-2.5 text-white bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition-colors">
+        <select {...props} className="w-full px-3 py-2.5 text-white bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:border-cyan-500 transition-colors">
             {children}
         </select>
     </div>

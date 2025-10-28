@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import type { Surah } from '../types';
 
@@ -13,18 +14,18 @@ const QuranPageLoader = () => (
         <div className="flex-grow overflow-y-auto -mr-4 pr-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {Array.from({ length: 12 }).map((_, i) => (
-                    <div key={i} className="bg-slate-800/50 p-4 rounded-lg animate-pulse">
+                    <div key={i} className="bg-slate-900/50 p-4 rounded-xl animate-pulse border border-slate-800">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-4">
-                                <div className="w-12 h-12 rounded-full bg-slate-700/50"></div>
+                                <div className="w-12 h-12 rounded-full bg-slate-800"></div>
                                 <div>
-                                    <div className="h-4 w-24 bg-slate-700/50 rounded"></div>
-                                    <div className="h-3 w-32 bg-slate-700/50 rounded mt-2"></div>
+                                    <div className="h-4 w-24 bg-slate-800 rounded"></div>
+                                    <div className="h-3 w-32 bg-slate-800 rounded mt-2"></div>
                                 </div>
                             </div>
                             <div className="text-right flex-shrink-0 pl-2">
-                                <div className="h-5 w-16 bg-slate-700/50 rounded"></div>
-                                <div className="h-2 w-20 bg-slate-700/50 rounded mt-2"></div>
+                                <div className="h-5 w-16 bg-slate-800 rounded"></div>
+                                <div className="h-2 w-20 bg-slate-800 rounded mt-2"></div>
                             </div>
                         </div>
                     </div>
@@ -47,7 +48,6 @@ const AutoNextToggleIcon: React.FC<{ enabled: boolean }> = ({ enabled }) => (
 const QuranPage: React.FC<QuranPageProps> = ({ surahs }) => {
   const [selectedSurah, setSelectedSurah] = useState<Surah | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(true);
   const [isAutoNextEnabled, setIsAutoNextEnabled] = useState(() => {
     try {
       const saved = localStorage.getItem('quranAutoNextEnabled');
@@ -57,11 +57,6 @@ const QuranPage: React.FC<QuranPageProps> = ({ surahs }) => {
     }
   });
   const audioRef = useRef<HTMLAudioElement>(null);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     try {
@@ -102,7 +97,7 @@ const QuranPage: React.FC<QuranPageProps> = ({ surahs }) => {
     }
   }, [isAutoNextEnabled, selectedSurah, filteredSurahs, handleSelectSurah]);
 
-  if (loading) {
+  if (surahs.length === 0) {
     return <QuranPageLoader />;
   }
 
@@ -111,15 +106,15 @@ const QuranPage: React.FC<QuranPageProps> = ({ surahs }) => {
         <div className="animate-fade-in relative flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]">
             <button
                 onClick={handleGoBack}
-                className="absolute top-0 left-0 bg-slate-700/50 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center transition-colors z-10"
+                className="absolute top-0 left-0 bg-slate-800/50 hover:bg-slate-700/80 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center transition-colors z-10"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
                 Back to List
             </button>
-            <div className="w-full max-w-2xl bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl shadow-2xl shadow-cyan-900/20 overflow-hidden">
-                <div className="p-8 bg-gradient-to-br from-slate-800 to-slate-800/80">
+            <div className="w-full max-w-2xl bg-slate-900/60 backdrop-blur-lg border border-slate-800 rounded-2xl shadow-2xl shadow-cyan-900/20 overflow-hidden">
+                <div className="p-8 bg-gradient-to-br from-slate-900 to-slate-800/50">
                     <div className="flex justify-between items-start">
                         <div>
                             <h2 className="text-3xl font-bold text-white">{selectedSurah.englishName}</h2>
@@ -133,7 +128,7 @@ const QuranPage: React.FC<QuranPageProps> = ({ surahs }) => {
                         {selectedSurah.revelationType} &bull; {selectedSurah.numberOfAyahs} Ayahs
                     </div>
                 </div>
-                <div className="p-6 bg-slate-900/50 flex items-center gap-4">
+                <div className="p-6 bg-black/30 flex items-center gap-4">
                     <audio
                         ref={audioRef}
                         controls
@@ -173,7 +168,7 @@ const QuranPage: React.FC<QuranPageProps> = ({ surahs }) => {
                     placeholder="Search by name, translation or number..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full max-w-lg pl-10 pr-4 py-2.5 text-white bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:border-cyan-500 transition-colors"
+                    className="w-full max-w-lg pl-10 pr-4 py-2.5 text-white bg-slate-900/70 border border-slate-800 rounded-lg focus:outline-none focus:border-cyan-500 transition-colors"
                     aria-label="Search Surahs"
                 />
             </div>
@@ -186,11 +181,11 @@ const QuranPage: React.FC<QuranPageProps> = ({ surahs }) => {
                     <div
                         key={surah.number}
                         onClick={() => handleSelectSurah(surah)}
-                        className="bg-slate-800/50 p-4 rounded-lg cursor-pointer transition-all duration-300 hover:bg-slate-700/80 hover:shadow-cyan-500/10 hover:shadow-lg hover:-translate-y-1"
+                        className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 p-4 rounded-xl cursor-pointer transition-all duration-300 hover:border-cyan-500/50 hover:bg-slate-800/50 hover:-translate-y-1"
                     >
                         <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-4">
-                                <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-full bg-slate-700/50 border border-slate-600">
+                                <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-full bg-slate-800 border border-slate-700">
                                     <span className="text-cyan-400 font-mono font-bold text-lg">{surah.number}</span>
                                 </div>
                                 <div>

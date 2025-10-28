@@ -1,10 +1,13 @@
+
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Route, Routes, useLocation, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
+import HomePage from './pages/HomePage';
 import QuranPage from './pages/QuranPage';
 import AnimePage from './pages/AnimePage';
 import FmRadioPage from './pages/FmRadioPage';
 import LiveTvPage from './pages/LiveTvPage';
+import LiveTvChannelPage from './pages/LiveTvChannelPage';
 import AboutPage from './pages/AboutPage';
 import AdminPage from './pages/AdminPage';
 import AdminLoginPage from './pages/AdminLoginPage';
@@ -18,88 +21,53 @@ const App: React.FC = () => {
   const [animeData, setAnimeData] = useState<Anime[]>([]);
   const [radioData, setRadioData] = useState<RadioStation[]>([]);
   const [liveTvData, setLiveTvData] = useState<LiveTvChannel[]>([]);
-  const [dataLoaded, setDataLoaded] = useState(false);
-
+  
   const [isAdmin, setIsAdmin] = useState(() => sessionStorage.getItem('isAdmin') === 'true');
 
   useEffect(() => {
-    const fetchAndSeedData = async () => {
-      try {
-        // --- Quran ---
-        const quranCollection = collection(db, 'quran');
-        let quranSnapshot = await getDocs(query(quranCollection, orderBy('number')));
-        if (quranSnapshot.empty) {
-          console.log('Quran collection is empty, seeding data...');
-          const batch = writeBatch(db);
-          initialQuranData.forEach(surah => {
-            const docRef = doc(quranCollection, String(surah.number).padStart(3, '0'));
-            batch.set(docRef, surah);
-          });
-          await batch.commit();
-          quranSnapshot = await getDocs(query(quranCollection, orderBy('number')));
+    const fetchCollection = async (
+        collectionName: string, 
+        setter: React.Dispatch<React.SetStateAction<any[]>>, 
+        initialData: any[],
+        orderByField?: string
+    ) => {
+        try {
+            const coll = collection(db, collectionName);
+            const q = orderByField ? query(coll, orderBy(orderByField)) : coll;
+            let snapshot = await getDocs(q);
+
+            if (snapshot.empty) {
+                console.log(`${collectionName} collection is empty, seeding data...`);
+                const batch = writeBatch(db);
+                initialData.forEach(item => {
+                    const docId = item.number ? String(item.number).padStart(3, '0') : undefined;
+                    const docRef = docId ? doc(coll, docId) : doc(coll);
+                    batch.set(docRef, item);
+                });
+                await batch.commit();
+                snapshot = await getDocs(q);
+            }
+            
+            const list = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+
+            // Specific logic for anime to show newest first
+            if (collectionName === 'anime') {
+                setter(list.reverse());
+            } else {
+                setter(list);
+            }
+
+        } catch (error) {
+            console.error(`Error fetching or seeding ${collectionName} data:`, error);
+            // In case of error, you might want to set some default state or show an error
         }
-        const quranList = quranSnapshot.docs.map(doc => doc.data() as Surah);
-        setQuranData(quranList);
-
-        // --- Anime ---
-        const animeCollection = collection(db, 'anime');
-        let animeSnapshot = await getDocs(animeCollection);
-        if (animeSnapshot.empty) {
-            console.log('Anime collection is empty, seeding data...');
-            const batch = writeBatch(db);
-            initialAnimeData.forEach(anime => {
-                const docRef = doc(animeCollection);
-                batch.set(docRef, anime);
-            });
-            await batch.commit();
-            animeSnapshot = await getDocs(animeCollection);
-        }
-        const animeList = animeSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Anime));
-        setAnimeData(animeList.reverse());
-
-
-        // --- Radio ---
-        const radioCollection = collection(db, 'radio');
-        let radioSnapshot = await getDocs(radioCollection);
-        if (radioSnapshot.empty) {
-            console.log('Radio collection is empty, seeding data...');
-            const batch = writeBatch(db);
-            initialRadioData.forEach(station => {
-                const docRef = doc(radioCollection);
-                batch.set(docRef, station);
-            });
-            await batch.commit();
-            radioSnapshot = await getDocs(radioCollection);
-        }
-        const radioList = radioSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as RadioStation));
-        setRadioData(radioList);
-
-
-        // --- Live TV ---
-        const tvCollection = collection(db, 'tv');
-        let tvSnapshot = await getDocs(tvCollection);
-        if (tvSnapshot.empty) {
-            console.log('Live TV collection is empty, seeding data...');
-            const batch = writeBatch(db);
-            initialLiveTvData.forEach(channel => {
-                const docRef = doc(tvCollection);
-                batch.set(docRef, channel);
-            });
-            await batch.commit();
-            tvSnapshot = await getDocs(tvCollection);
-        }
-        const tvList = tvSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as LiveTvChannel));
-        setLiveTvData(tvList);
-
-      } catch (error) {
-        console.error("Error fetching or seeding data:", error);
-        alert("Could not connect to Firebase. Please check your configuration in services/firebase.ts and ensure Firestore is enabled in your project.");
-      } finally {
-        setDataLoaded(true);
-      }
     };
 
-    fetchAndSeedData();
+    fetchCollection('quran', setQuranData, initialQuranData, 'number');
+    fetchCollection('anime', setAnimeData, initialAnimeData);
+    fetchCollection('radio', setRadioData, initialRadioData);
+    fetchCollection('tv', setLiveTvData, initialLiveTvData);
+
   }, []);
 
 
@@ -150,11 +118,11 @@ const App: React.FC = () => {
   // Anime
   const handleAddAnime = async (anime: Omit<Anime, 'id'>) => {
     try {
-        const docRef = await setDoc(doc(collection(db, 'anime')), anime);
-        // Note: setDoc doesn't return a ref like addDoc, so we refetch to get the ID. A bit inefficient but simple.
-        // A better approach might be to generate an ID client-side.
-        const animeList = (await getDocs(collection(db, 'anime'))).docs.map(doc => ({ ...doc.data(), id: doc.id } as Anime));
-        setAnimeData(animeList.reverse());
+        const newDocRef = doc(collection(db, 'anime'));
+        await setDoc(newDocRef, anime);
+        const newAnimeWithId: Anime = { ...anime, id: newDocRef.id };
+        // Prepend new anime to keep the newest ones at the top, consistent with initial load's .reverse()
+        setAnimeData(prev => [newAnimeWithId, ...prev]);
     } catch (e) {
         console.error("Error adding Anime: ", e);
         throw e;
@@ -183,9 +151,11 @@ const App: React.FC = () => {
   // Radio
   const handleAddRadioStation = async (station: Omit<RadioStation, 'id'>) => {
      try {
-        const docRef = await setDoc(doc(collection(db, 'radio')), station);
-        const radioList = (await getDocs(collection(db, 'radio'))).docs.map(doc => ({ ...doc.data(), id: doc.id } as RadioStation));
-        setRadioData(radioList);
+        const newDocRef = doc(collection(db, 'radio'));
+        await setDoc(newDocRef, station);
+        const newStationWithId: RadioStation = { ...station, id: newDocRef.id };
+        // Append to the end, as the original load doesn't reverse
+        setRadioData(prev => [...prev, newStationWithId]);
     } catch (e) {
         console.error("Error adding Radio Station: ", e);
         throw e;
@@ -214,9 +184,11 @@ const App: React.FC = () => {
   // Live TV
   const handleAddLiveTvChannel = async (channel: Omit<LiveTvChannel, 'id'>) => {
     try {
-        const docRef = await setDoc(doc(collection(db, 'tv')), channel);
-        const tvList = (await getDocs(collection(db, 'tv'))).docs.map(doc => ({ ...doc.data(), id: doc.id } as LiveTvChannel));
-        setLiveTvData(tvList);
+        const newDocRef = doc(collection(db, 'tv'));
+        await setDoc(newDocRef, channel);
+        const newChannelWithId: LiveTvChannel = { ...channel, id: newDocRef.id };
+        // Append to the end
+        setLiveTvData(prev => [...prev, newChannelWithId]);
     } catch (e) {
         console.error("Error adding Live TV Channel: ", e);
         throw e;
@@ -248,42 +220,32 @@ const App: React.FC = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     
     const getTitle = () => {
-      switch(location.pathname) {
-        case '/': return "Quran Recitations";
+      const { pathname } = location;
+      if (pathname.startsWith('/live-tv/')) return "Live TV";
+      switch(pathname) {
+        case '/': return "Home";
+        case '/quran': return "Quran Recitations";
         case '/anime': return "Anime Streaming";
         case '/fm-radio': return "FM Radio";
         case '/live-tv': return "Live TV";
-        case '/about': return "About Us";
-        case '/admin': return "Admin Panel";
-        case '/admin-login': return "Login";
+        case '/about': return "About AhanHub";
+        case '/admin': return "Admin Dashboard";
+        case '/admin-login': return "Admin Login";
         default: return "AhanHub";
       }
     };
     
     const isLoginPage = location.pathname === '/admin-login';
 
-    if (!dataLoaded && !isLoginPage) {
-      return (
-        <div className="flex items-center justify-center h-screen w-screen">
-          <div className="text-center">
-            <div className="text-2xl font-bold tracking-wider text-white mb-4">
-                Ahan<span className="text-cyan-400">Hub</span>
-            </div>
-            <p className="text-gray-300">Loading Content...</p>
-          </div>
-        </div>
-      )
-    }
-
     return (
-      <div className="flex h-screen bg-slate-900 text-gray-200 overflow-hidden">
+      <div className="flex h-screen bg-transparent text-gray-200 overflow-hidden">
         {!isLoginPage && <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />}
         <div className="flex flex-col flex-1 w-full lg:w-auto overflow-hidden">
             {/* Mobile Header */}
             {!isLoginPage && (
-              <header className="lg:hidden flex items-center justify-between p-4 shrink-0 border-b border-slate-700/80">
+              <header className="lg:hidden flex items-center justify-between p-4 shrink-0 border-b border-slate-800 bg-slate-900/60 backdrop-blur-sm">
                   <div className="text-xl font-bold tracking-wider text-white">
-                      Ahan<span className="text-cyan-400">Hub</span>
+                      Ahan<span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">Hub</span>
                   </div>
                   <button 
                       onClick={() => setIsSidebarOpen(true)}
@@ -298,12 +260,19 @@ const App: React.FC = () => {
             )}
 
             <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
-              {!isLoginPage && <h1 className="hidden lg:block text-3xl font-bold mb-8 tracking-tight text-cyan-400">{getTitle()}</h1>}
+              {!isLoginPage && <h1 className="hidden lg:block text-4xl font-bold mb-8 tracking-tight text-white">{getTitle()}</h1>}
               <Routes>
-                <Route path="/" element={<QuranPage surahs={quranData} />} />
+                <Route path="/" element={<HomePage 
+                    surahs={quranData.slice(0, 6)} 
+                    animes={animeData.slice(0, 5)} 
+                    stations={radioData.slice(0, 5)}
+                    channels={liveTvData.slice(0, 5)}
+                />} />
+                <Route path="/quran" element={<QuranPage surahs={quranData} />} />
                 <Route path="/anime" element={<AnimePage animes={animeData} />} />
                 <Route path="/fm-radio" element={<FmRadioPage stations={radioData} />} />
                 <Route path="/live-tv" element={<LiveTvPage channels={liveTvData} />} />
+                <Route path="/live-tv/:channelId" element={<LiveTvChannelPage channels={liveTvData} />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/admin-login" element={<AdminLoginPage onLogin={() => setIsAdmin(true)} />} />
                 <Route path="/admin" element={

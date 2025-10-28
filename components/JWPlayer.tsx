@@ -13,51 +13,41 @@ interface JWPlayerProps {
 
 const JWPlayer: React.FC<JWPlayerProps> = ({ file, title }) => {
     const playerId = useRef(`jwplayer-${Math.random().toString(36).substring(2)}`).current;
-    const playerInstance = useRef<any>(null);
-
+    
     useEffect(() => {
         if (!file || typeof window.jwplayer === 'undefined') {
             return;
         }
-
-        // If player already exists, just load the new file and ensure it's unmuted
-        if (playerInstance.current) {
-            playerInstance.current.load([{ file, title }]);
-            playerInstance.current.setMute(false);
-            return;
-        }
         
-        const player = window.jwplayer(playerId);
+        let player: any;
+        try {
+            player = window.jwplayer(playerId);
 
-        player.setup({
-            file: file,
-            title: title,
-            width: "100%",
-            aspectratio: "16:9",
-            autostart: true,
-            // Explicitly start with sound enabled. Browser may still override this.
-            mute: false,
-        });
-
-        // On player ready, explicitly try to unmute. 
-        // This has a higher chance of success after a user interaction (like clicking a channel).
-        player.on('ready', () => {
-            player.setMute(false);
-        });
-
-        playerInstance.current = player;
+            player.setup({
+                file: file,
+                title: title,
+                width: "100%",
+                aspectratio: "16:9",
+                autostart: true,
+                // Defaulting to unmuted. Note: Most browsers block autoplay with sound,
+                // so the user may need to press play manually.
+                mute: false,
+            });
+        } catch (e) {
+            console.error("Error setting up JWPlayer instance:", e);
+        }
 
         return () => {
-            if (playerInstance.current) {
+            // This robust cleanup ensures the correct player instance is removed.
+            // When navigating between pages, the old component unmounts, this runs,
+            // and removes the player, preventing conflicts with the new instance.
+            const playerInstance = window.jwplayer(playerId);
+            if (playerInstance && typeof playerInstance.remove === 'function') {
                 try {
-                    // Check if player is in DOM before removing
-                    if (document.getElementById(playerId)) {
-                         playerInstance.current.remove();
-                    }
+                    playerInstance.remove();
                 } catch (e) {
                     console.error("Error removing JWPlayer instance:", e);
                 }
-                playerInstance.current = null;
             }
         };
     }, [file, title, playerId]);

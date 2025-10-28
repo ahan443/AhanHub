@@ -35,13 +35,13 @@ const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onLogin }) => {
             <div className="w-full max-w-sm">
                 <div className="text-center mb-8">
                     <h1 className="text-4xl font-bold tracking-wider text-white">
-                        Ahan<span className="text-cyan-400">Hub</span>
+                        Ahan<span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">Hub</span>
                     </h1>
-                    <p className="text-gray-400 mt-2">Login</p>
+                    <p className="text-gray-400 mt-2">Admin Panel Login</p>
                 </div>
                 <form 
                     onSubmit={handleSubmit}
-                    className="bg-slate-800/50 border border-slate-700 shadow-2xl shadow-cyan-900/20 rounded-lg px-8 pt-6 pb-8 mb-4"
+                    className="bg-slate-900/60 backdrop-blur-lg border border-slate-800 shadow-2xl shadow-cyan-900/10 rounded-lg px-8 pt-6 pb-8 mb-4"
                 >
                     <div className="mb-4">
                         <label className="block text-gray-300 text-sm font-bold mb-2" htmlFor="password">
@@ -49,7 +49,7 @@ const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onLogin }) => {
                         </label>
                         <input
                             ref={passwordInputRef}
-                            className="w-full px-3 py-2 text-white bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition-colors"
+                            className="w-full px-3 py-2 text-white bg-slate-800/50 border border-slate-700 rounded-lg focus:outline-none focus:border-cyan-500 transition-colors"
                             id="password"
                             type="password"
                             placeholder="******************"

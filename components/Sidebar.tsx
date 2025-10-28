@@ -1,5 +1,12 @@
+
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+
+const IconHome: React.FC = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+    </svg>
+);
 
 const IconQuran: React.FC = () => (
   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -45,9 +52,9 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
-  const navLinkClasses = "flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200";
-  const activeClasses = "bg-cyan-500/20 text-cyan-400 font-semibold";
-  const inactiveClasses = "text-gray-400 hover:bg-slate-700/50 hover:text-white";
+  const navLinkClasses = "flex items-center space-x-3 pl-3.5 pr-4 py-3 rounded-lg transition-all duration-200";
+  const activeClasses = "bg-slate-800 text-cyan-300 font-semibold border-l-2 border-cyan-400";
+  const inactiveClasses = "text-gray-400 hover:bg-slate-800/50 hover:text-white border-l-2 border-transparent";
 
   const closeSidebar = () => setIsOpen(false);
 
@@ -61,10 +68,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
       ></div>
 
       {/* Sidebar */}
-      <aside className={`fixed lg:relative z-30 h-full w-64 bg-slate-800/50 p-4 flex flex-col border-r border-slate-700 transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+      <aside className={`fixed lg:relative z-30 h-full w-64 bg-slate-900/60 backdrop-blur-lg p-4 flex flex-col border-r border-slate-800 transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
         <div className="flex items-center justify-between mb-10">
           <div className="text-2xl font-bold tracking-wider text-white">
-            Ahan<span className="text-cyan-400">Hub</span>
+            Ahan<span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">Hub</span>
           </div>
           <button onClick={closeSidebar} className="lg:hidden p-1 rounded-md text-gray-400 hover:text-white hover:bg-slate-700/50" aria-label="Close menu">
              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -74,7 +81,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
         </div>
 
         <nav className="flex flex-col space-y-2">
-          <NavLink to="/" onClick={closeSidebar} className={({ isActive }) => `${navLinkClasses} ${isActive ? activeClasses : inactiveClasses}`}>
+          <NavLink end to="/" onClick={closeSidebar} className={({ isActive }) => `${navLinkClasses} ${isActive ? activeClasses : inactiveClasses}`}>
+            <IconHome />
+            <span>Home</span>
+          </NavLink>
+          <NavLink to="/quran" onClick={closeSidebar} className={({ isActive }) => `${navLinkClasses} ${isActive ? activeClasses : inactiveClasses}`}>
             <IconQuran />
             <span>Quran</span>
           </NavLink>
@@ -91,7 +102,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
             <span>Live TV</span>
           </NavLink>
         </nav>
-        <div className="mt-auto border-t border-slate-700/50 pt-2 space-y-2">
+        <div className="mt-auto border-t border-slate-800 pt-2 space-y-2">
            <NavLink to="/admin" onClick={closeSidebar} className={({ isActive }) => `${navLinkClasses} ${isActive ? activeClasses : inactiveClasses}`}>
             <IconAdmin />
             <span>Login</span>
